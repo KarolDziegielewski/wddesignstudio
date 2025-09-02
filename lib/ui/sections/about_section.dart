@@ -67,99 +67,137 @@ class _AboutSectionState extends State<AboutSection>
   Widget build(BuildContext context) {
     final t = S.of(context);
     final theme = Theme.of(context);
-    final onGlass = theme.colorScheme.onSurface
-        .withOpacity(0.92); // prosty, czytelny kolor tekstu
+    final size = MediaQuery.sizeOf(context);
+    final isMobile = size.width < 760;
+
+    // Na mobile nie rozmazujemy tła (oszczędzamy GPU i unikamy „mleka”)
+    final blurSigma = isMobile ? 0.0 : 16.0;
+
+    // Kolor tekstu na „szkle”
+    final onGlass = theme.colorScheme.onSurface.withOpacity(0.92);
+
+    final containerDecoration = isMobile
+        ? BoxDecoration(
+            color: Colors.white.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Colors.black.withOpacity(0.05),
+              width: 1,
+            ),
+          )
+        : BoxDecoration(
+            color: Colors.white.withOpacity(0.10),
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.22),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.14),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
+              ),
+            ],
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                const Color(0xFFFFFFFF).withOpacity(0.16),
+                const Color(0xFF6B4F3A).withOpacity(0.08),
+              ],
+            ),
+          );
 
     return Center(
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(isMobile ? 20 : 32),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 1200),
-            margin: const EdgeInsets.all(24),
-            padding: const EdgeInsets.all(28),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.10),
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.22),
-                width: 1.2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.14),
-                  blurRadius: 24,
-                  offset: const Offset(0, 12),
-                ),
-              ],
-              // subtelne biało-brązowe szkło
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  const Color(0xFFFFFFFF).withOpacity(0.16),
-                  const Color(0xFF6B4F3A).withOpacity(0.08), // ciepły brąz
-                ],
-              ),
-            ),
+            margin: EdgeInsets.all(isMobile ? 16 : 24),
+            padding: EdgeInsets.all(isMobile ? 16 : 28),
+            decoration: containerDecoration,
             child: LayoutBuilder(
               builder: (context, c) {
-                final isMobile = c.maxWidth < 760;
-                return isMobile
-                    ? Column(
-                        children: [
-                          // limit szerokości, żeby foto nie dominowało na mobile
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 380),
-                            child: _AnimatedPhoto(
-                              fade: _fadePhoto,
-                              slide: _slidePhoto,
-                              hovering: _hoveringPhoto,
-                              onHoverChanged: (v) =>
-                                  setState(() => _hoveringPhoto = v),
+                final mobile = c.maxWidth < 760;
+                return AnimatedSize(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOutCubic,
+                  child: mobile
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 420),
+                              child: _AnimatedPhoto(
+                                fade: _fadePhoto,
+                                slide: _slidePhoto,
+                                hovering: _hoveringPhoto,
+                                onHoverChanged: (v) =>
+                                    setState(() => _hoveringPhoto = v),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                          _AnimatedTextBlock(
-                            text: t.aboutPlaceholder,
-                            fade: _fadeText,
-                            slide: _slideText,
-                            textColor: onGlass,
-                          ),
-                        ],
-                      )
-                    : Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // zmniejszone z 5 do 4, żeby zdjęcie było trochę mniejsze
-                          const SizedBox(width: 4),
-                          Expanded(
-                            flex: 4,
-                            child: _AnimatedPhoto(
-                              fade: _fadePhoto,
-                              slide: _slidePhoto,
-                              hovering: _hoveringPhoto,
-                              onHoverChanged: (v) =>
-                                  setState(() => _hoveringPhoto = v),
-                            ),
-                          ),
-                          const SizedBox(width: 32),
-                          Expanded(
-                            flex: 8, // więcej miejsca na treść
-                            child: _AnimatedTextBlock(
+                            const SizedBox(height: 14),
+                            _MobileDivider(),
+                            const SizedBox(height: 14),
+                            _AnimatedTextBlock(
                               text: t.aboutPlaceholder,
                               fade: _fadeText,
                               slide: _slideText,
-                              textColor: onGlass,
+                              textColor: theme.brightness == Brightness.dark
+                                  ? Colors.white.withOpacity(0.96)
+                                  : Colors.black.withOpacity(0.86),
+                              compact: true,
                             ),
-                          ),
-                        ],
-                      );
+                          ],
+                        )
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(width: 4),
+                            Expanded(
+                              flex: 4,
+                              child: _AnimatedPhoto(
+                                fade: _fadePhoto,
+                                slide: _slidePhoto,
+                                hovering: _hoveringPhoto,
+                                onHoverChanged: (v) =>
+                                    setState(() => _hoveringPhoto = v),
+                              ),
+                            ),
+                            const SizedBox(width: 32),
+                            Expanded(
+                              flex: 8,
+                              child: _AnimatedTextBlock(
+                                text: t.aboutPlaceholder,
+                                fade: _fadeText,
+                                slide: _slideText,
+                                textColor: onGlass,
+                              ),
+                            ),
+                          ],
+                        ),
+                );
               },
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _MobileDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 6,
+      width: 64,
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.07),
+        borderRadius: BorderRadius.circular(999),
       ),
     );
   }
@@ -180,23 +218,30 @@ class _AnimatedPhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isVeryNarrow = MediaQuery.sizeOf(context).width < 360;
+
     final photo = ClipRRect(
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(20),
       child: AspectRatio(
-        aspectRatio:
-            3 / 4, // pionowe, duże — ale całość zmniejszona flexem/constraints
+        aspectRatio: 4 / 5, // trochę „grubiej” na mobile
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset("assets/images/weronika.jpg", fit: BoxFit.cover),
-            // delikatny brązowy „premium” gradient na krawędziach
+            // W razie potrzeby możesz dodać placeholder:
+            // FadeInImage(...)
+            Image.asset(
+              "assets/images/weronika.jpg",
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.high,
+            ),
+            // delikatny brązowy gradient
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.bottomLeft,
                   end: Alignment.topRight,
                   colors: [
-                    const Color(0xFF3A2A20).withOpacity(0.18),
+                    const Color(0xFF3A2A20).withOpacity(0.16),
                     Colors.transparent,
                   ],
                 ),
@@ -226,11 +271,14 @@ class _AnimatedPhoto extends StatelessWidget {
           )
         : photo;
 
-    return FadeTransition(
-      opacity: fade,
-      child: SlideTransition(
-        position: slide,
-        child: photoWithHover,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: isVeryNarrow ? 0 : 4),
+      child: FadeTransition(
+        opacity: fade,
+        child: SlideTransition(
+          position: slide,
+          child: photoWithHover,
+        ),
       ),
     );
   }
@@ -242,21 +290,22 @@ class _AnimatedTextBlock extends StatelessWidget {
     required this.fade,
     required this.slide,
     this.textColor,
+    this.compact = false,
   });
 
   final String text;
   final Animation<double> fade;
   final Animation<Offset> slide;
   final Color? textColor;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
     final scale = MediaQuery.textScaleFactorOf(context);
-    final isPhone = w < 420; // ciasne telefony
+    final isPhone = w < 420;
     final isTablet = w >= 420 && w < 760;
 
-    // typografia dopasowana do skali systemowej, ale bez przeskalowania „za dużo”
     double baseSize = isPhone
         ? 16.0
         : isTablet
@@ -270,14 +319,12 @@ class _AnimatedTextBlock extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final Color fg = (textColor ?? scheme.onSurface.withOpacity(0.96));
 
-    // Na telefonie ZERO gradientów i mocnych cieni – czysta karta.
     final BoxDecoration decoPhone = BoxDecoration(
-      color: Colors.white.withOpacity(0.92),
+      color: Colors.white,
       borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: Colors.black.withOpacity(0.04), width: 1),
+      border: Border.all(color: Colors.black.withOpacity(0.05), width: 1),
     );
 
-    // Na większych ekranach lekki „glass”, ale stonowany.
     final BoxDecoration decoLarger = BoxDecoration(
       borderRadius: BorderRadius.circular(16),
       border: Border.all(color: Colors.white.withOpacity(0.18), width: 1),
@@ -301,19 +348,20 @@ class _AnimatedTextBlock extends StatelessWidget {
 
     final content = Center(
       child: ConstrainedBox(
-        // wąski i wygodny blok czytania
         constraints: BoxConstraints(
+          // węższy blok na phone, wygodny do czytania
           maxWidth: isPhone ? 560 : 720,
         ),
         child: Container(
           padding: EdgeInsets.symmetric(
             horizontal: isPhone ? 14 : 20,
-            vertical: isPhone ? 12 : 18,
+            vertical: isPhone ? (compact ? 10 : 12) : (compact ? 14 : 18),
           ),
           decoration: isPhone ? decoPhone : decoLarger,
           child: Text(
             text,
             softWrap: true,
+            // justowanie wyłączone na phone — lepsza czytelność
             textAlign: isPhone ? TextAlign.start : TextAlign.justify,
             textHeightBehavior: const TextHeightBehavior(
               applyHeightToFirstAscent: false,
@@ -324,9 +372,8 @@ class _AnimatedTextBlock extends StatelessWidget {
               fontSize: baseSize,
               height: lineHeight,
               letterSpacing: letter,
-              fontWeight: FontWeight.w500, // spokojny, niekrzyczący
+              fontWeight: FontWeight.w500,
               color: fg,
-              // bez cieni – czysto i nowocześnie
               shadows: const [],
             ),
           ),
