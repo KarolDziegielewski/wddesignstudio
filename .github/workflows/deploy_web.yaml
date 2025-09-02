@@ -2,11 +2,10 @@ name: Deploy Flutter Web to GitHub Pages
 
 on:
   push:
-    branches: [ main ]   # jeśli masz 'master', zmień tu
+    branches: [ main ]        # zmień na master jeśli używasz 'master'
   workflow_dispatch:
 
-# WAŻNE: jawne uprawnienia dla Pages
-permissions:
+permissions:                  # kluczowe, żeby uniknąć exit code 128
   contents: read
   pages: write
   id-token: write
@@ -31,9 +30,9 @@ jobs:
         run: flutter pub get
 
       - name: Build (release)
-        run: flutter build web --release --base-href "/wddesignstudio/"
+        run: flutter build web --release --base-href "/wddesingstudio/"
 
-      - name: Upload artifact
+      - name: Upload artifact (build/web)
         uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
