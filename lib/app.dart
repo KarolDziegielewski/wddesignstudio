@@ -273,7 +273,7 @@ class _MobileDrawer extends StatelessWidget {
       child: SafeArea(
         child: ListView(children: [
           ListTile(
-            leading: const Icon(Icons.palette_outlined),
+            leading: null,
             title: const Text('WD Design Studio'),
             subtitle: Text(t.heroPill),
           ),
