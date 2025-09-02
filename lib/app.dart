@@ -52,6 +52,26 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  void _showLangSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      showDragHandle: true,
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            SizedBox(height: 8),
+            LangSwitcher(),
+            SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = S.of(context);
@@ -70,14 +90,20 @@ class _LandingPageState extends State<LandingPage> {
         surfaceTintColor: Colors.transparent,
         titleSpacing: 0,
         title: Padding(
-          padding: const EdgeInsets.only(left: 16),
+          padding: EdgeInsets.only(left: _isMobile ? 8 : 16),
           child: Row(
             children: [
               const SizedBox(width: 10),
-              Text('WD Design Studio',
-                  style: Theme.of(context).textTheme.titleLarge),
-              const Spacer(),
-              if (!_isMobile)
+              Expanded(
+                child: Text(
+                  'WD Design Studio',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              if (!_isMobile) ...[
+                const SizedBox(width: 24),
                 Row(children: [
                   _NavBtn(label: t.about, onTap: () => _scrollTo(_aboutKey)),
                   _NavBtn(
@@ -87,12 +113,22 @@ class _LandingPageState extends State<LandingPage> {
                       label: t.contact, onTap: () => _scrollTo(_contactKey)),
                   _NavBtn(label: t.faq, onTap: () => _scrollTo(_faqKey)),
                 ]),
-              const SizedBox(width: 8),
-              const LangSwitcher(),
-              const SizedBox(width: 16),
+                const SizedBox(width: 8),
+                const LangSwitcher(),
+                const SizedBox(width: 16),
+              ],
             ],
           ),
         ),
+        actions: _isMobile
+            ? [
+                IconButton(
+                  tooltip: 'Language',
+                  icon: const Icon(Icons.language),
+                  onPressed: () => _showLangSheet(context),
+                ),
+              ]
+            : null,
         flexibleSpace: ClipRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
