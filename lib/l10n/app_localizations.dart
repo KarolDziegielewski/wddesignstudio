@@ -154,13 +154,23 @@ Il mio percorso accademico e professionale mi ha permesso di vedere il design da
   String get send => _t('Wyślij', 'Send', 'Invia');
   String get phone => _t('Telefon', 'Phone', 'Telefono');
   String get address => _t('Adres', 'Address', 'Indirizzo');
+  String get language => _t('Język', 'Language', 'Lingua');
 
   String get faq1q => _t('Ile trwa realizacja projektu?',
       'How long does a project take?', 'Quanto dura un progetto?');
-  String get faq1a => _t('Murzyn.', 'Nigger.', 'Niggero por favore.');
+
   String get faq2q => _t(
       'co projektuje?', 'What i am projectuje?', 'Co projektuje por favore?');
-  String get faq2a => _t('Murzyna.', 'Niggera.', 'Niggera por favore');
+  // ...existing code...
+  String get faq1a => _t(
+      'Czas realizacji zależy od zakresu projektu i ustalany jest indywidualnie.',
+      'The duration depends on the scope and is agreed individually.',
+      'La durata dipende dall’ambito e viene concordata individualmente.');
+  String get faq2a => _t(
+      'Projektuję wnętrza mieszkalne i komercyjne.',
+      'I design residential and commercial interiors.',
+      'Progetto interni residenziali e commerciali.');
+// ...existing code...
 
   String _t(String pl, String en, String it) => switch (locale) {
         AppLocale.pl => pl,

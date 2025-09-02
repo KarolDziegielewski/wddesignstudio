@@ -26,6 +26,7 @@ class _LandingPageState extends State<LandingPage> {
 
   double _offset = 0;
   bool get _isMobile => MediaQuery.of(context).size.width < 900;
+  bool get _isPhone => MediaQuery.of(context).size.width < 600;
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class _LandingPageState extends State<LandingPage> {
     showModalBottomSheet(
       context: context,
       useSafeArea: true,
+      isScrollControlled: false,
       backgroundColor: Theme.of(context).colorScheme.surface,
       showDragHandle: true,
       builder: (ctx) => Padding(
@@ -76,10 +78,11 @@ class _LandingPageState extends State<LandingPage> {
   Widget build(BuildContext context) {
     final t = S.of(context);
 
-    // Opacity i cień AppBar po scrollu (0..1)
+    // AppBar: opacity/blur/elevation zależnie od scrollu + lżejszy blur na mobile
     final appBarOpacity = (_offset / 180).clamp(0, 1).toDouble();
-    final blurSigma = 12.0 * appBarOpacity;
-    final elevation = 8.0 * appBarOpacity;
+    final baseBlur = 12.0 * appBarOpacity;
+    final blurSigma = _isMobile ? baseBlur * 0.6 : baseBlur;
+    final elevation = (_isMobile ? 6.0 : 8.0) * appBarOpacity;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -93,17 +96,21 @@ class _LandingPageState extends State<LandingPage> {
           padding: EdgeInsets.only(left: _isMobile ? 8 : 16),
           child: Row(
             children: [
-              const SizedBox(width: 10),
+              if (!_isMobile) const SizedBox(width: 10),
               Expanded(
-                child: Text(
-                  'WD Design Studio',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleLarge,
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    'WD Design Studio',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                 ),
               ),
               if (!_isMobile) ...[
                 const SizedBox(width: 24),
+                // Nawigacja tylko desktop/tablet szeroki
                 Row(children: [
                   _NavBtn(label: t.about, onTap: () => _scrollTo(_aboutKey)),
                   _NavBtn(
@@ -123,7 +130,7 @@ class _LandingPageState extends State<LandingPage> {
         actions: _isMobile
             ? [
                 IconButton(
-                  tooltip: 'Language',
+                  tooltip: t.language, // jeśli masz w l10n, inaczej "Language"
                   icon: const Icon(Icons.language),
                   onPressed: () => _showLangSheet(context),
                 ),
@@ -148,7 +155,7 @@ class _LandingPageState extends State<LandingPage> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
-                color: Colors.transparent, // nic nie narzuca, czysty glass
+                color: Colors.transparent,
               ),
             ),
           ),
@@ -172,29 +179,41 @@ class _LandingPageState extends State<LandingPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Odstęp, bo AppBar jest "behind"
-                SizedBox(height: MediaQuery.of(context).padding.top + 72),
+                SizedBox(
+                    height: MediaQuery.of(context).padding.top +
+                        (_isMobile ? 64 : 72)),
                 _HeroSection(
                   onProjects: () => _scrollTo(_projectsKey),
                   scrollOffset: _offset,
+                  isMobile: _isMobile,
+                  isPhone: _isPhone,
                 ),
                 SectionShell(
-                    key: _aboutKey,
-                    title: t.about,
-                    child: const AboutSection()),
+                  key: _aboutKey,
+                  title: t.about,
+                  // AboutSection już jest responsywna (Twoja najnowsza wersja)
+                  child: const AboutSection(),
+                ),
                 SectionShell(
-                    key: _projectsKey,
-                    title: t.projects,
-                    child: const ProjectsSection()),
+                  key: _projectsKey,
+                  title: t.projects,
+                  child: const ProjectsSection(),
+                ),
                 SectionShell(
-                    key: _offerKey,
-                    title: t.offer,
-                    child: const OfferSection()),
+                  key: _offerKey,
+                  title: t.offer,
+                  child: const OfferSection(),
+                ),
                 SectionShell(
-                    key: _contactKey,
-                    title: t.contact,
-                    child: const ContactSection()),
+                  key: _contactKey,
+                  title: t.contact,
+                  child: const ContactSection(),
+                ),
                 SectionShell(
-                    key: _faqKey, title: t.faq, child: const FaqSection()),
+                  key: _faqKey,
+                  title: t.faq,
+                  child: const FaqSection(),
+                ),
                 const _Footer(),
               ],
             ),
@@ -228,10 +247,12 @@ class _NavBtnState extends State<_NavBtn> {
         onEnter: (_) => setState(() => _hover = true),
         onExit: (_) => setState(() => _hover = false),
         child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: widget.onTap,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(
+                horizontal: 12, vertical: 10), // większy hit target
             decoration: BoxDecoration(
               color:
                   _hover ? Colors.black.withOpacity(.04) : Colors.transparent,
@@ -271,85 +292,114 @@ class _MobileDrawer extends StatelessWidget {
     final t = S.of(context);
     return Drawer(
       child: SafeArea(
-        child: ListView(children: [
-          ListTile(
-            leading: null,
-            title: const Text('WD Design Studio'),
-            subtitle: Text(t.heroPill),
-          ),
-          const Divider(),
-          ListTile(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            ListTile(
+              // minimalistyczny nagłówek
+              title: const Text('WD Design Studio'),
+              subtitle: Text(t.heroPill),
+              visualDensity: VisualDensity.compact,
+            ),
+            const Divider(height: 1),
+            ListTile(
               title: Text(t.about),
               onTap: () {
                 Navigator.pop(context);
                 onSelect(keys['about']!);
-              }),
-          ListTile(
+              },
+            ),
+            ListTile(
               title: Text(t.projects),
               onTap: () {
                 Navigator.pop(context);
                 onSelect(keys['projects']!);
-              }),
-          ListTile(
+              },
+            ),
+            ListTile(
               title: Text(t.offer),
               onTap: () {
                 Navigator.pop(context);
                 onSelect(keys['offer']!);
-              }),
-          ListTile(
+              },
+            ),
+            ListTile(
               title: Text(t.contact),
               onTap: () {
                 Navigator.pop(context);
                 onSelect(keys['contact']!);
-              }),
-          ListTile(
+              },
+            ),
+            ListTile(
               title: Text(t.faq),
               onTap: () {
                 Navigator.pop(context);
                 onSelect(keys['faq']!);
-              }),
-          const Divider(),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: LangSwitcher(),
-          ),
-        ]),
+              },
+            ),
+            const Divider(height: 1),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: LangSwitcher(),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _HeroSection extends StatelessWidget {
-  const _HeroSection({required this.onProjects, required this.scrollOffset});
+  const _HeroSection({
+    required this.onProjects,
+    required this.scrollOffset,
+    required this.isMobile,
+    required this.isPhone,
+  });
   final VoidCallback onProjects;
   final double scrollOffset;
+  final bool isMobile;
+  final bool isPhone;
 
   @override
   Widget build(BuildContext context) {
     final t = S.of(context);
     final size = MediaQuery.of(context).size;
-    final bool isNarrow = size.width < 900;
 
-    // Parallax: subtelne przesunięcie tła przy scrollu
-    final parallax = (scrollOffset * 0.08).clamp(0, size.height);
+    // lżejszy parallax na mobile
+    final parallaxFactor = isMobile ? 0.05 : 0.08;
+    final parallax = (scrollOffset * parallaxFactor).clamp(0, size.height);
+
+    // wysokość hero: na telefonach ~86% wysokości, min 560
+    final double heroHeight =
+        isMobile ? (size.height * 0.86).clamp(560.0, 900.0) : size.height;
+
+    // odstępy i rozmiary tekstu/CTA
+    final edgeH = isMobile ? (isPhone ? 18.0 : 22.0) : 64.0;
+    final subtitleSize = isMobile ? 18.0 : 20.0;
+    final ctaHPadPrimary = isMobile ? 26.0 : 34.0;
+    final ctaVPadPrimary = isMobile ? 14.0 : 18.0;
+    final ctaHPadSecondary = isMobile ? 24.0 : 30.0;
+    final ctaVPadSecondary = isMobile ? 12.0 : 16.0;
 
     return SizedBox(
       width: double.infinity,
-      height: size.height, // fullscreen
+      height: heroHeight,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // TŁO: obraz z parallax
+          // TŁO
           Transform.translate(
             offset: Offset(0, -parallax.toDouble()),
             child: Image.asset(
               'assets/images/hero.jpg',
               fit: BoxFit.cover,
               alignment: Alignment.center,
+              filterQuality: FilterQuality.medium, // lżej na mobile
             ),
           ),
 
-          // FUTURYSTYCZNY OVERLAY: diagonalny gradient + subtelny radial
+          // OVERLAY: diagonalny gradient + subtelny radial (bez zmian)
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -378,28 +428,34 @@ class _HeroSection extends StatelessWidget {
             ),
           ),
 
-          // GLOW BLOBS
+          // GLOW BLOBS — lżejsza nieprzezroczystość na mobile
           Positioned(
             top: -80,
             left: -60,
             child: _GlowCircle(
-              size: 260,
-              color: Theme.of(context).colorScheme.primary.withOpacity(.25),
+              size: isMobile ? 220 : 260,
+              color: Theme.of(context)
+                  .colorScheme
+                  .primary
+                  .withOpacity(isMobile ? .20 : .25),
             ),
           ),
           Positioned(
             bottom: -120,
             right: -80,
             child: _GlowCircle(
-              size: 320,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(.18),
+              size: isMobile ? 280 : 320,
+              color: Theme.of(context)
+                  .colorScheme
+                  .secondary
+                  .withOpacity(isMobile ? .14 : .18),
             ),
           ),
 
           // TREŚĆ
           Center(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: isNarrow ? 22 : 64),
+              padding: EdgeInsets.symmetric(horizontal: edgeH),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1200),
                 child: Column(
@@ -407,8 +463,9 @@ class _HeroSection extends StatelessWidget {
                   children: [
                     // PILL
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 14 : 18,
+                          vertical: isMobile ? 6 : 8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(999),
                         color: Colors.white.withOpacity(.14),
@@ -417,14 +474,15 @@ class _HeroSection extends StatelessWidget {
                       ),
                       child: Text(
                         t.heroPill.toUpperCase(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
-                          letterSpacing: 1.4,
+                          letterSpacing: 1.2,
+                          fontSize: isMobile ? 12 : 14,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 26),
+                    SizedBox(height: isMobile ? 20 : 26),
 
                     // TYTUŁ
                     TweenAnimationBuilder<double>(
@@ -442,11 +500,18 @@ class _HeroSection extends StatelessWidget {
                             Theme.of(context).textTheme.displayLarge?.copyWith(
                                   fontWeight: FontWeight.w800,
                                   color: Colors.white,
-                                  letterSpacing: -1.5,
+                                  letterSpacing: -1.2,
+                                  fontSize: isMobile
+                                      ? (isPhone ? 34 : 42)
+                                      : Theme.of(context)
+                                              .textTheme
+                                              .displayLarge
+                                              ?.fontSize ??
+                                          56,
                                 ),
                       ),
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
 
                     // PODTYTUŁ
                     Text(
@@ -454,19 +519,19 @@ class _HeroSection extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: Colors.white.withOpacity(.92),
-                            fontSize: 20,
+                            fontSize: subtitleSize,
                             height: 1.45,
+                            letterSpacing: 0.1,
                           ),
                     ),
-                    const SizedBox(height: 44),
+                    SizedBox(height: isMobile ? 30 : 44),
 
                     // CTA
                     Wrap(
-                      spacing: 16,
-                      runSpacing: 12,
+                      spacing: 12,
+                      runSpacing: 10,
                       alignment: WrapAlignment.center,
                       children: [
-                        // Primary CTA (jasny, z cieniem)
                         FilledButton.icon(
                           onPressed: onProjects,
                           icon: const Icon(Icons.work_outline),
@@ -474,18 +539,21 @@ class _HeroSection extends StatelessWidget {
                           style: FilledButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: Colors.black87,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 34, vertical: 18),
-                            textStyle: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: ctaHPadPrimary,
+                              vertical: ctaVPadPrimary,
+                            ),
+                            textStyle: TextStyle(
+                              fontSize: isMobile ? 16 : 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
                             ),
-                            elevation: 10,
+                            elevation: isMobile ? 8 : 10,
                             shadowColor: Colors.black45,
                           ),
                         ),
-                        // Secondary CTA (glass outline)
                         OutlinedButton.icon(
                           onPressed: () => Scrollable.ensureVisible(
                             context
@@ -502,9 +570,11 @@ class _HeroSection extends StatelessWidget {
                             side: const BorderSide(
                                 color: Colors.white70, width: 2),
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 16),
-                            textStyle: const TextStyle(fontSize: 18),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: ctaHPadSecondary,
+                              vertical: ctaVPadSecondary,
+                            ),
+                            textStyle: TextStyle(fontSize: isMobile ? 16 : 18),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
                             ),
@@ -513,10 +583,10 @@ class _HeroSection extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 40),
+                    SizedBox(height: isMobile ? 28 : 40),
 
-                    // Scroll hint (animowany)
-                    _ScrollHint(),
+                    // Scroll hint
+                    const _ScrollHint(),
                   ],
                 ),
               ),
@@ -532,35 +602,38 @@ class FuturisticBackground extends StatelessWidget {
   const FuturisticBackground({super.key});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFFAF6F1), // beż
-            Color(0xFFFDFBF8), // prawie biały
-          ],
+    final isMobile = MediaQuery.of(context).size.width < 900;
+    return RepaintBoundary(
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFFAF6F1), // beż
+              Color(0xFFFDFBF8), // prawie biały
+            ],
+          ),
         ),
+        child: Stack(children: [
+          Positioned(
+            top: isMobile ? -140 : -120,
+            left: isMobile ? -100 : -80,
+            child: _GlowCircle(
+              size: isMobile ? 220 : 260,
+              color: const Color(0xFFD7BFA7).withOpacity(isMobile ? .20 : .25),
+            ),
+          ),
+          Positioned(
+            bottom: isMobile ? -180 : -160,
+            right: isMobile ? -140 : -120,
+            child: _GlowCircle(
+              size: isMobile ? 320 : 360,
+              color: const Color(0xFF8B5E3C).withOpacity(isMobile ? .14 : .18),
+            ),
+          ),
+        ]),
       ),
-      child: Stack(children: [
-        Positioned(
-          top: -120,
-          left: -80,
-          child: _GlowCircle(
-            size: 260,
-            color: const Color(0xFFD7BFA7).withOpacity(.25), // jasny brąz
-          ),
-        ),
-        Positioned(
-          bottom: -160,
-          right: -120,
-          child: _GlowCircle(
-            size: 360,
-            color: const Color(0xFF8B5E3C).withOpacity(.18), // ciemny brąz
-          ),
-        ),
-      ]),
     );
   }
 }
@@ -571,20 +644,23 @@ class _GlowCircle extends StatelessWidget {
   final Color color;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(color: color, blurRadius: 120, spreadRadius: 80),
-        ],
+    return IgnorePointer(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(color: color, blurRadius: 120, spreadRadius: 80),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _ScrollHint extends StatefulWidget {
+  const _ScrollHint();
   @override
   State<_ScrollHint> createState() => _ScrollHintState();
 }
@@ -602,16 +678,19 @@ class _ScrollHintState extends State<_ScrollHint>
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: Tween(begin: .4, end: 1.0).animate(
-        CurvedAnimation(parent: _c, curve: Curves.easeInOut),
-      ),
-      child: Column(
-        children: const [
-          Icon(Icons.keyboard_arrow_down, color: Colors.white70, size: 28),
-          SizedBox(height: 4),
-          Icon(Icons.keyboard_arrow_down, color: Colors.white70, size: 28),
-        ],
+    return Semantics(
+      label: 'Scroll down',
+      child: FadeTransition(
+        opacity: Tween(begin: .4, end: 1.0).animate(
+          CurvedAnimation(parent: _c, curve: Curves.easeInOut),
+        ),
+        child: Column(
+          children: const [
+            Icon(Icons.keyboard_arrow_down, color: Colors.white70, size: 28),
+            SizedBox(height: 4),
+            Icon(Icons.keyboard_arrow_down, color: Colors.white70, size: 28),
+          ],
+        ),
       ),
     );
   }
@@ -623,19 +702,23 @@ class _Footer extends StatelessWidget {
   Widget build(BuildContext context) {
     final year = DateTime.now().year.toString();
     final t = S.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 56),
-      alignment: Alignment.center,
+    final isMobile = MediaQuery.of(context).size.width < 900;
+    return Padding(
+      padding:
+          EdgeInsets.fromLTRB(24, isMobile ? 40 : 56, 24, isMobile ? 40 : 56),
       child: Column(children: [
         const Divider(height: 32),
         const SizedBox(height: 12),
         Wrap(
           alignment: WrapAlignment.center,
           spacing: 14,
+          runSpacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Text('© $year WD Design Studio',
-                style: Theme.of(context).textTheme.bodyMedium),
+            Text(
+              '© $year WD Design Studio',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             const Text('•'),
             Text(t.privacy),
             const Text('•'),
