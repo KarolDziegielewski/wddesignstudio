@@ -106,7 +106,6 @@ na dwudrzwiową lodówkę, zapewniające maksymalną funkcjonalność i komfort.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
