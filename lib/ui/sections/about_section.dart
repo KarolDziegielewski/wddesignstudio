@@ -20,6 +20,9 @@ class _AboutSectionState extends State<AboutSection>
 
   bool _hoveringPhoto = false;
 
+  // NEW: stan rozwinięcia na mobile
+  bool _mobileExpanded = false;
+
   @override
   void initState() {
     super.initState();
@@ -129,8 +132,11 @@ class _AboutSectionState extends State<AboutSection>
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            // Foto – mniejsze w stanie zwiniętym
                             ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 420),
+                              constraints: BoxConstraints(
+                                maxWidth: _mobileExpanded ? 420 : 180,
+                              ),
                               child: _AnimatedPhoto(
                                 fade: _fadePhoto,
                                 slide: _slidePhoto,
@@ -142,6 +148,8 @@ class _AboutSectionState extends State<AboutSection>
                             const SizedBox(height: 14),
                             _MobileDivider(),
                             const SizedBox(height: 14),
+
+                            // Tekst – 3 linie w stanie zwiniętym
                             _AnimatedTextBlock(
                               text: t.aboutPlaceholder,
                               fade: _fadeText,
@@ -150,6 +158,28 @@ class _AboutSectionState extends State<AboutSection>
                                   ? Colors.white.withOpacity(0.96)
                                   : Colors.black.withOpacity(0.86),
                               compact: true,
+                              maxLines: _mobileExpanded ? null : 3,
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            // Przycisk Pokaż więcej/mniej
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              child: TextButton.icon(
+                                key: ValueKey(_mobileExpanded),
+                                onPressed: () => setState(
+                                    () => _mobileExpanded = !_mobileExpanded),
+                                icon: Icon(_mobileExpanded
+                                    ? Icons.expand_less
+                                    : Icons.expand_more),
+                                label: Text(_mobileExpanded
+                                    ? 'Pokaż mniej'
+                                    : 'Pokaż więcej'),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: theme.colorScheme.primary,
+                                ),
+                              ),
                             ),
                           ],
                         )
@@ -227,8 +257,6 @@ class _AnimatedPhoto extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // W razie potrzeby możesz dodać placeholder:
-            // FadeInImage(...)
             Image.asset(
               "assets/images/weronika.jpg",
               fit: BoxFit.cover,
@@ -291,6 +319,7 @@ class _AnimatedTextBlock extends StatelessWidget {
     required this.slide,
     this.textColor,
     this.compact = false,
+    this.maxLines, // NEW
   });
 
   final String text;
@@ -298,6 +327,7 @@ class _AnimatedTextBlock extends StatelessWidget {
   final Animation<Offset> slide;
   final Color? textColor;
   final bool compact;
+  final int? maxLines; // NEW
 
   @override
   Widget build(BuildContext context) {
@@ -367,6 +397,9 @@ class _AnimatedTextBlock extends StatelessWidget {
               applyHeightToFirstAscent: false,
               applyHeightToLastDescent: true,
             ),
+            maxLines: maxLines,
+            overflow:
+                maxLines == null ? TextOverflow.visible : TextOverflow.ellipsis,
             style: (Theme.of(context).textTheme.bodyLarge ?? const TextStyle())
                 .copyWith(
               fontSize: baseSize,

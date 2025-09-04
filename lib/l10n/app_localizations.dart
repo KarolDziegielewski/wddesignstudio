@@ -159,6 +159,63 @@ Il mio percorso accademico e professionale mi ha permesso di vedere il design da
       'Jak wygląda współpraca online?',
       'How does the design process work if we collaborate remotely?',
       'Come funziona la collaborazione a distanza?');
+  String get cookies => _t(
+      '''Czym są cookies: to małe pliki zapisywane w przeglądarce, potrzebne do działania strony i statystyk.
+Zakres stosowania:
+• Niezbędne – konieczne do działania serwisu (np. język, bezpieczeństwo). Działają na podstawie uzasadnionego interesu – nie wymagają zgody.
+• Analityczne/Statystyczne – pomagają ulepszać stronę (np. anonimowe statystyki odwiedzin). Włączane wyłącznie za Twoją zgodą.
+• Marketingowe – jeżeli używane, służą personalizacji treści/reklam. Włączane tylko za Twoją zgodą.
+Zarządzanie: możesz w każdej chwili zmienić ustawienia w przeglądarce (blokowanie, usuwanie) lub w banerze zgód (jeśli dostępny).
+Czas działania: cookies sesyjne wygasają po zamknięciu przeglądarki; trwałe – po określonym czasie (zwykle 1–12 miesięcy).
+Wyłączenie cookies niezbędnych może uniemożliwić korzystanie z części funkcji strony.''',
+      '''What are cookies: small files stored in your browser, necessary for proper site functioning and statistics.
+Scope of use:
+• Essential – required for website operation (e.g. language, security). Based on legitimate interest, no consent required.
+• Analytics/Statistics – help improve the site (e.g. anonymous visit data). Enabled only with your consent.
+• Marketing – if used, personalize ads/content. Enabled only with your consent.
+Management: you can adjust settings in your browser at any time (block/delete) or via our consent banner (if available).
+Validity: session cookies expire when you close the browser; persistent ones after a set period (typically 1–12 months).
+Disabling essential cookies may affect proper use of some site features.''',
+      '''Cosa sono i cookie: piccoli file salvati nel browser, necessari al corretto funzionamento del sito e alle statistiche.
+Ambito di utilizzo:
+• Essenziali – necessari al funzionamento del sito (es. lingua, sicurezza). Basati su interesse legittimo, non richiedono consenso.
+• Analitici/Statistici – aiutano a migliorare il sito (es. dati anonimi delle visite). Attivati solo con il tuo consenso.
+• Marketing – se utilizzati, servono a personalizzare contenuti/pubblicità. Attivati solo con il tuo consenso.
+Gestione: puoi modificare le impostazioni del browser in qualsiasi momento (blocco, eliminazione) o tramite il nostro banner di consenso (se disponibile).
+Durata: i cookie di sessione scadono alla chiusura del browser; quelli persistenti dopo un periodo definito (tipicamente 1–12 mesi).
+La disattivazione dei cookie essenziali può impedire il corretto funzionamento di alcune parti del sito.''');
+  String get offerPrice => _t(
+      'Cena już od 99 zł za m²',
+      'Prices starting from 20 GBP per sq.m',
+      'Prezzi a partire da 25 EUR al mq');
+  String get policy => _t(
+      '''Administrator: WD Design Studio (kontakt: studio@dziegielewska.info).
+Cele przetwarzania: obsługa zapytań przez formularz i e-mail, świadczenie usług, rozliczenia, bezpieczeństwo serwisu, własny marketing (np. odpowiedzi na zapytania), analityka.
+Podstawa prawna: art. 6 ust. 1 lit. b RODO (umowa / działania przed jej zawarciem), lit. c (obowiązki prawne), lit. f (uzasadniony interes – bezpieczeństwo, roszczenia, analityka); w przypadku zgody – art. 6 ust. 1 lit. a.
+Odbiorcy: dostawcy hostingu, poczty, analityki, IT; podwykonawcy w razie potrzeby.
+Okres przechowywania: czas trwania korespondencji/umowy + okres przedawnienia; dane na podstawie zgody – do jej wycofania; logi techniczne – maks. 12 miesięcy.
+Prawa: dostęp, sprostowanie, usunięcie, ograniczenie, przenoszenie, sprzeciw, skarga do Prezesa UODO. Zgodę można cofnąć w każdej chwili.
+Dobrowolność: podanie danych jest dobrowolne, ale konieczne do obsługi zapytania.
+Przekazywanie poza EOG: możliwe, gdy dostawca serwerów znajduje się poza EOG – stosowane są standardowe klauzule umowne.
+Profilowanie: brak zautomatyzowanego podejmowania decyzji; jedynie podstawowa analityka.''',
+      '''Controller: WD Design Studio (contact: studio@dziegielewska.info).
+Purposes: handling inquiries via form/email, providing services, billing, site security, own marketing (e.g. answering requests), analytics.
+Legal basis: Art. 6(1)(b) GDPR (contract/steps prior), (c) legal obligations, (f) legitimate interests (security, claims, analytics); if based on consent – Art. 6(1)(a).
+Recipients: hosting, email, analytics providers, IT support, subcontractors if necessary.
+Retention: for correspondence/contract duration + limitation period; consent-based data until withdrawal; technical logs max. 12 months.
+Rights: access, rectification, erasure, restriction, portability, objection, complaint to the Data Protection Authority. Consent can be withdrawn anytime.
+Voluntary: providing data is voluntary but necessary for handling requests.
+Transfers outside EEA: possible if providers store data outside EEA, with standard contractual clauses.
+Profiling: no automated decision-making, only basic analytics.''',
+      '''Titolare: WD Design Studio (contatto: studio@dziegielewska.info).
+Finalità: gestione delle richieste tramite modulo/e-mail, erogazione dei servizi, fatturazione, sicurezza del sito, marketing diretto (es. risposte a richieste), analisi.
+Basi giuridiche: art. 6 par. 1 lett. b GDPR (contratto/fasi precontrattuali), lett. c (obblighi legali), lett. f (interesse legittimo – sicurezza, tutela dei diritti, analisi); in caso di consenso – art. 6 par. 1 lett. a.
+Destinatari: fornitori di hosting, posta, analisi, infrastruttura IT; subappaltatori se necessario.
+Conservazione: per la durata della corrispondenza/contratto + termini di prescrizione; dati trattati su consenso – fino a revoca; log tecnici – max 12 mesi.
+Diritti: accesso, rettifica, cancellazione, limitazione, portabilità, opposizione, reclamo al Garante Privacy. Il consenso può essere revocato in qualsiasi momento.
+Facoltativo: fornire i dati è facoltativo, ma necessario per gestire le richieste.
+Trasferimenti fuori SEE: possibili con clausole contrattuali standard se i server sono fuori dallo SEE.
+Profilazione: nessuna decisione automatizzata, solo analisi di base.''');
 
   String get faq1a => _t(
       'Cała komunikacja odbywa się przez wideorozmowy i e-mail. Wystarczy, że prześlesz mi zdjęcia, wymiary lub rzut mieszkania, a ja przygotuję układ funkcjonalny, koncepcję i wizualizacje. Otrzymujesz dokumentację w formie cyfrowej, którą łatwo przekazać wykonawcom, więc cały proces przebiega sprawnie nawet bez spotkania na miejscu.',

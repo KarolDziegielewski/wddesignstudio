@@ -74,6 +74,84 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  void _showPrivacySheet(BuildContext context) {
+    final t = S.of(context);
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      showDragHandle: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      builder: (_) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.6,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        builder: (_, controller) => Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          child: ListView(
+            controller: controller,
+            children: [
+              Text(t.privacy, style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 8),
+              Text(
+                t.policy,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerRight,
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Zamknij'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showCookiesSheet(BuildContext context) {
+    final t = S.of(context);
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      showDragHandle: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      builder: (_) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.55,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        builder: (_, controller) => Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          child: ListView(
+            controller: controller,
+            children: [
+              Text('Cookies', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 8),
+              Text(
+                t.cookies,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerRight,
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Zamknij'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = S.of(context);
@@ -214,7 +292,10 @@ class _LandingPageState extends State<LandingPage> {
                   title: t.faq,
                   child: const FaqSection(),
                 ),
-                const _Footer(),
+                _Footer(
+                  onPrivacyTap: () => _showPrivacySheet(context),
+                  onCookiesTap: () => _showCookiesSheet(context),
+                ),
               ],
             ),
           ),
@@ -697,35 +778,49 @@ class _ScrollHintState extends State<_ScrollHint>
 }
 
 class _Footer extends StatelessWidget {
-  const _Footer();
+  const _Footer({
+    required this.onPrivacyTap,
+    required this.onCookiesTap,
+  });
+
+  final VoidCallback onPrivacyTap;
+  final VoidCallback onCookiesTap;
+
   @override
   Widget build(BuildContext context) {
     final year = DateTime.now().year.toString();
     final t = S.of(context);
     final isMobile = MediaQuery.of(context).size.width < 900;
+
     return Padding(
       padding:
           EdgeInsets.fromLTRB(24, isMobile ? 40 : 56, 24, isMobile ? 40 : 56),
-      child: Column(children: [
-        const Divider(height: 32),
-        const SizedBox(height: 12),
-        Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 14,
-          runSpacing: 8,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Text(
-              '© $year WD Design Studio',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const Text('•'),
-            Text(t.privacy),
-            const Text('•'),
-            const Text('Cookies'),
-          ],
-        ),
-      ]),
+      child: Column(
+        children: [
+          const Divider(height: 32),
+          const SizedBox(height: 12),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 6,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text('© $year WD Design Studio',
+                  style: Theme.of(context).textTheme.bodyMedium),
+              const Text('•'),
+              TextButton(
+                onPressed: onPrivacyTap,
+                child: Text(t.privacy), // np. „Polityka prywatności”
+              ),
+              const Text('•'),
+              TextButton(
+                onPressed: onCookiesTap,
+                child: const Text('Cookies'),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -18,15 +18,57 @@ class OfferSection extends StatelessWidget {
       (t.offer7title, t.offer7desc),
       (t.offer8title, t.offer8desc),
     ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(t.offerHint, style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 12),
+        Text(
+          t.offerHint,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 18),
+
+        // >>> DODANY DUŻY NAPIS O CENIE (bardziej fancy) <<<
+        Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFD7CCC8), Color(0xFFBCAAA4)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF6D4C41).withOpacity(0.18),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Text(
+              t.offerPrice,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 134, 84, 67), // brąz
+                fontSize: 32,
+                letterSpacing: 1.2,
+                shadows: [
+                  Shadow(
+                    color: Colors.white.withOpacity(0.7),
+                    offset: const Offset(0, 2),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+
         LayoutBuilder(
           builder: (context, c) {
-            // szerokie, NISKIE kafelki
             const maxTileWidth = 520.0;
             return GridView.builder(
               itemCount: offers.length,
@@ -36,7 +78,7 @@ class OfferSection extends StatelessWidget {
                 maxCrossAxisExtent: maxTileWidth,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 4.8, // szeroko i nisko
+                childAspectRatio: 4.8,
               ),
               itemBuilder: (context, i) {
                 final (title, desc) = offers[i];

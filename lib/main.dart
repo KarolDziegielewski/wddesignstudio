@@ -32,9 +32,7 @@ class _WDDesignStudioRootState extends State<WDDesignStudioRoot> {
         themeMode: ThemeMode.light,
         // Minimalna integracja z systemem lokalizacji Fluttera
         locale: _locale.toLocale(),
-        supportedLocales: const [
-          Locale('pl'), Locale('en'), Locale('it')
-        ],
+        supportedLocales: const [Locale('pl'), Locale('en'), Locale('it')],
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
