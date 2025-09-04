@@ -6,7 +6,6 @@ class Project {
   final String longDescription; // dłuższy opis – w detalu
   final String coverImage; // JEDNO zdjęcie na kartę (asset lub URL)
   final List<String> gallery; // 0..N zdjęć po kliknięciu
-  final List<String> tags;
 
   const Project({
     required this.title,
@@ -14,7 +13,6 @@ class Project {
     required this.longDescription,
     required this.coverImage,
     this.gallery = const [],
-    this.tags = const [],
   });
 }
 
@@ -47,7 +45,6 @@ Zakres prac obejmował:
           'assets/images/proj1_1.jpg',
           'assets/images/proj1_2.jpg',
         ],
-        tags: ['renowacja', 'rozbudowa', 'wiktoriański'],
       ),
       const Project(
         title: 'Copper I',
@@ -63,7 +60,6 @@ pracy stawiam na otwartość, elastyczność i aktywny kontakt z inwestorem, tak
           'assets/images/proj2_2.jpg',
           'assets/images/proj2_3.jpg',
         ],
-        tags: ['kibel', 'sranie'],
       ),
       const Project(
         title: 'Copper II',
@@ -79,7 +75,6 @@ pracy stawiam na otwartość, elastyczność i aktywny kontakt z inwestorem, tak
           'assets/images/proj3_2.jpg',
           'assets/images/proj3_3.jpg',
         ],
-        tags: ['kibel', 'sranie'],
       ),
       const Project(
         title: 'Olive Green Elegance',
@@ -99,9 +94,7 @@ na dwudrzwiową lodówkę, zapewniające maksymalną funkcjonalność i komfort.
           'assets/images/proj4_6.jpg',
           'assets/images/proj4_7.jpg',
         ],
-        tags: ['kibel', 'sranie'],
       ),
-      // ← dodaj kolejne Project(...)
     ];
   }
 
@@ -113,17 +106,6 @@ na dwudrzwiową lodówkę, zapewniające maksymalną funkcjonalność i komfort.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            OutlinedButton.icon(
-              onPressed: _openFilters,
-              icon: const Icon(Icons.filter_alt_outlined),
-              label: Text(''),
-            ),
-          ],
-        ),
         const SizedBox(height: 16),
         GridView.builder(
           shrinkWrap: true,
@@ -143,14 +125,6 @@ na dwudrzwiową lodówkę, zapewniające maksymalną funkcjonalność i komfort.
       ],
     );
   }
-
-  void _openFilters() => showModalBottomSheet(
-        context: context,
-        showDragHandle: true,
-        builder: (_) => const SizedBox(
-          height: 280,
-        ),
-      );
 
   void _openProject(Project p) => showModalBottomSheet(
         context: context,
@@ -181,7 +155,7 @@ class _ProjectCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           image: DecorationImage(
-            image: _coverProvider(project.coverImage), // asset lub URL
+            image: _coverProvider(project.coverImage),
             fit: BoxFit.cover,
             colorFilter:
                 const ColorFilter.mode(Colors.black26, BlendMode.darken),
@@ -196,7 +170,6 @@ class _ProjectCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // gradient od dołu
             Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -211,8 +184,6 @@ class _ProjectCard extends StatelessWidget {
                 ),
               ),
             ),
-
-            // tekst
             Positioned(
               left: 16,
               right: 16,
@@ -300,23 +271,7 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                 icon: const Icon(Icons.close),
               ),
             ]),
-            const SizedBox(height: 12),
-            if (p.tags.isNotEmpty)
-              Wrap(
-                spacing: 8,
-                children: p.tags
-                    .map(
-                      (t) => Chip(
-                        label: Text(t),
-                        visualDensity: VisualDensity.compact,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                    )
-                    .toList(),
-              ),
             const SizedBox(height: 16),
-
-            // (opcjonalnie) Galeria – widoczna tylko jeśli są zdjęcia
             if (gallery.isNotEmpty) ...[
               AspectRatio(
                 aspectRatio: 16 / 9,
@@ -390,7 +345,6 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                 ),
               const SizedBox(height: 16),
             ],
-
             const SizedBox(height: 6),
             Text(
               p.longDescription,
@@ -418,7 +372,7 @@ class _NavBtn extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(6),
-          child: Icon(icon, color: Colors.white), // używa przekazanego icon
+          child: Icon(icon, color: Colors.white),
         ),
       ),
     );

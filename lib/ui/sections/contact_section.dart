@@ -48,10 +48,11 @@ class _ContactSectionState extends State<ContactSection> {
     final email = _emailCtrl.text.trim();
     final msg = _msgCtrl.text.trim();
 
-    final subject = 'Zapytanie ze strony ($name)';
+    final subject =
+        'Kocham siostrzyczke (wiadomość z formularza ze stronki skibidi)';
     final signature = '\n\n— $name ($email)';
     final uri = _mailtoUri(
-      to: 'kontakt@wddesignstudio.pl',
+      to: 'studio@dziegielewska.info',
       subject: subject,
       body: '$msg$signature',
     );
