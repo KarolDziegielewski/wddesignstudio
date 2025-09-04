@@ -155,22 +155,85 @@ Il mio percorso accademico e professionale mi ha permesso di vedere il design da
   String get phone => _t('Telefon', 'Phone', 'Telefono');
   String get address => _t('Adres', 'Address', 'Indirizzo');
   String get language => _t('Język', 'Language', 'Lingua');
+  String get faq1q => _t(
+      'Jak wygląda współpraca online?',
+      'How does the design process work if we collaborate remotely?',
+      'Come funziona la collaborazione a distanza?');
 
-  String get faq1q => _t('Ile trwa realizacja projektu?',
-      'How long does a project take?', 'Quanto dura un progetto?');
+  String get faq1a => _t(
+      'Cała komunikacja odbywa się przez wideorozmowy i e-mail. Wystarczy, że prześlesz mi zdjęcia, wymiary lub rzut mieszkania, a ja przygotuję układ funkcjonalny, koncepcję i wizualizacje. Otrzymujesz dokumentację w formie cyfrowej, którą łatwo przekazać wykonawcom, więc cały proces przebiega sprawnie nawet bez spotkania na miejscu.',
+      'All communication happens online via video calls and email. You send me photos, measurements, or floor plans of your space, and I prepare layouts, concepts, and visualizations. You receive digital documentation that’s easy to share with contractors, so the process is smooth even without an in-person visit.',
+      'Tutta la comunicazione avviene tramite videochiamate ed e-mail. Mi invii foto, misure o la planimetria, e io preparo layout funzionali, concept e visualizzazioni 3D. Ricevi una documentazione digitale facile da condividere con imprese e fornitori, così il processo è fluido anche senza incontro in presenza.');
 
   String get faq2q => _t(
-      'co projektuje?', 'What i am projectuje?', 'Co projektuje por favore?');
-  // ...existing code...
-  String get faq1a => _t(
-      'Czas realizacji zależy od zakresu projektu i ustalany jest indywidualnie.',
-      'The duration depends on the scope and is agreed individually.',
-      'La durata dipende dall’ambito e viene concordata individualmente.');
+      'Czy musisz zobaczyć moje mieszkanie na żywo?',
+      'Do you need to visit my space in person?',
+      'È necessario che tu visiti lo spazio di persona?');
+
   String get faq2a => _t(
-      'Projektuję wnętrza mieszkalne i komercyjne.',
-      'I design residential and commercial interiors.',
-      'Progetto interni residenziali e commerciali.');
-// ...existing code...
+      'Nie jest to konieczne. Większość projektów realizuję w pełni online. Jeśli jednak projekt znajduje się w Polsce, Londynie lub na Sycylii, możemy umówić wizytę na miejscu. Koszty podróży ustalamy indywidualnie.',
+      'Not necessarily. Most projects are completed fully online. However, if your project is in Poland, Sicily, or London we can arrange an on-site visit or meeting. Travel costs are agreed individually.',
+      'Non sempre. La maggior parte dei progetti si realizza interamente online. Tuttavia, se il progetto si trova in Polonia, Londra o Sicilia, possiamo concordare una visita in loco. Le spese di viaggio vengono definite caso per caso.');
+
+  String get faq3q => _t(
+      'Jak wyceniany jest projekt?',
+      'How is pricing calculated?',
+      'Come viene calcolato il prezzo del progetto?');
+
+  String get faq3a => _t(
+      'Każdy projekt wyceniam indywidualnie. Cena zależy od wybranego zakresu usług (konsultacja, koncepcja, rysunki, dokumentacja wykonawcza), poziomu szczegółowości oraz liczby wizualizacji i proponowanych wariantów.',
+      'Each project is priced individually. The final cost depends on the services you choose (consultation, concept, drawings, contractor package), the level of detail, and the number of visualizations or design options required.',
+      'Ogni progetto viene preventivato individualmente. Il costo finale dipende dai servizi scelti (consulenza, concept, disegni, pacchetto tecnico), dal livello di dettaglio e dal numero di visualizzazioni o varianti progettuali richieste.');
+
+  String get faq4q => _t(
+      'Jakie materiały muszę przygotować na początek?',
+      'What information do you need to start?',
+      'Quali materiali devo fornire all’inizio?');
+
+  String get faq4a => _t(
+      'Na start proszę zazwyczaj o rzut mieszkania, wymiary pomieszczeń, zdjęcia i krótki opis Twoich potrzeb oraz stylu życia. Bardzo pomocne są również inspiracje, np. z Pinteresta - dzięki nim łatwiej zrozumiem Twój gust i oczekiwania.',
+      'At the beginning, I usually ask for floor plans, room measurements, photos, and a short description of your needs and lifestyle. Any inspiration images or Pinterest boards are also welcome — they help me better understand your taste and expectations.',
+      'Di solito chiedo la planimetria, le misure degli ambienti, alcune foto e una breve descrizione delle tue esigenze e del tuo stile di vita. Sono molto utili anche immagini di riferimento o bacheche Pinterest, perché aiutano a capire meglio i tuoi gusti.');
+
+  String get faq5q => _t(
+      'Ile trwa realizacja projektu?',
+      'How long does a project take?',
+      'Quanto tempo serve per completare un progetto?');
+
+  String get faq5a => _t(
+      'To zależy od skali i zakresu prac. Prosta konsultacja czy układ funkcjonalny zajmuje zwykle 1–2 tygodnie, a pełen projekt z dokumentacją i wizualizacjami - około 4-8 tygodni. Zawsze podaję szacowany czas realizacji przed rozpoczęciem współpracy.',
+      'It depends on the scope and size of the project. A simple consultation or layout plan can take 1–2 weeks, while a full design package with drawings and visualizations usually takes 4–8 weeks. I’ll always give you an estimated timeline before starting.',
+      'Dipende dall’entità e dalla complessità. Una semplice consulenza o un layout funzionale richiede 1-2 settimane, mentre un progetto completo con disegni e visualizzazioni richiede in media 4-8 settimane. Prima di iniziare, fornisco sempre una stima dei tempi.');
+
+  String get faq6q => _t(
+      'Czy mogę zostawić dotychczasowe meble lub elementy wystroju?',
+      'Can you work with my existing furniture or decor?',
+      'Puoi integrare mobili o arredi che già possiedo?');
+
+  String get faq6a => _t(
+      'Oczywiście. Jeśli chcesz zachować wybrane meble lub dodatki, dopasuję projekt tak, aby je uwzględnić i wkomponować w nową koncepcję. Dzięki temu wnętrze zyskuje indywidualny charakter.',
+      'Absolutely. If you’d like to keep certain pieces, I’ll design around them and integrate them into the new concept. This often adds a unique, personal character to the project.',
+      'Certamente. Se desideri mantenere alcuni pezzi, li includerò nella nuova proposta e li valorizzerò nel contesto generale. Questo dona agli interni un carattere unico e personale.');
+
+  String get faq7q => _t(
+      'Czy przygotowujesz listy zakupów i pomagasz w wyborze produktów?',
+      'Do you also provide shopping lists and help with sourcing?',
+      'Offri anche liste d’acquisto e supporto nella scelta dei prodotti?');
+
+  String get faq7a => _t(
+      'Tak. Mogę przygotować spersonalizowaną listę mebli, oświetlenia i dodatków - z linkami do produktów i propozycjami alternatyw w różnych przedziałach cenowych. To znacznie ułatwia i przyspiesza zakupy.',
+      'Yes. I can create tailored shopping lists with furniture, lighting, and accessories — including links to products and alternatives at different price points. This makes it easier and faster for you to shop.',
+      'Sì. Posso creare liste personalizzate di mobili, illuminazione e accessori, con link diretti ai prodotti e alternative in diverse fasce di prezzo. In questo modo lo shopping è più semplice e veloce.');
+
+  String get faq8q => _t(
+      'Czy współpracujesz także z deweloperami i firmami?',
+      'Do you work with developers and businesses?',
+      'Lavori anche con sviluppatori immobiliari o aziende?');
+
+  String get faq8a => _t(
+      'Tak. Oprócz projektów prywatnych zajmuję się również aranżacją mieszkań pokazowych, lokali na wynajem oraz wybranych przestrzeni publicznych. Oferuję pełną dokumentację wykonawczą i wizualizacje, które zwiększają atrakcyjność nieruchomości na rynku.',
+      'Yes. In addition to private residential projects, I also design show apartments, rental properties, and selected public spaces. I provide contractor-ready documentation and visualizations that help increase the market appeal of a property.',
+      'Sì. Oltre ai progetti residenziali privati, realizzo anche interni per appartamenti campione, immobili destinati all’affitto e alcuni spazi pubblici. Fornisco documentazione tecnica completa e visualizzazioni che aumentano l’attrattiva della proprietà sul mercato.');
 
   String _t(String pl, String en, String it) => switch (locale) {
         AppLocale.pl => pl,
