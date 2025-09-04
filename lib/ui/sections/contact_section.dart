@@ -209,7 +209,7 @@ class _ContactSectionState extends State<ContactSection> {
               title: 'E-mail',
               leading: const Icon(Icons.mail_outline, size: 22),
               content: SelectableText(
-                'studio@dziegielewska.info',
+                'karol@dziegielewski.info',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
