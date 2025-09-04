@@ -282,10 +282,24 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                         controller: _page,
                         itemCount: gallery.length,
                         onPageChanged: (i) => setState(() => _i = i),
-                        itemBuilder: (_, i) => Ink.image(
-                          image: _imgProvider(gallery[i]),
-                          fit: BoxFit.cover,
-                          child: const SizedBox.expand(),
+                        itemBuilder: (_, i) => GestureDetector(
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              fullscreenDialog: true,
+                              builder: (_) => _GalleryFullscreen(
+                                images: gallery,
+                                initialIndex: i,
+                              ),
+                            ),
+                          ),
+                          child: Hero(
+                            tag: 'gallery-hero-${gallery[i]}',
+                            child: Ink.image(
+                              image: _imgProvider(gallery[i]),
+                              fit: BoxFit.cover,
+                              child: const SizedBox.expand(),
+                            ),
+                          ),
                         ),
                       ),
                       Positioned.fill(
@@ -372,6 +386,167 @@ class _NavBtn extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(6),
           child: Icon(icon, color: Colors.white),
+        ),
+      ),
+    );
+  }
+}
+
+class _GalleryFullscreen extends StatefulWidget {
+  const _GalleryFullscreen({required this.images, this.initialIndex = 0});
+  final List<String> images;
+  final int initialIndex;
+
+  @override
+  State<_GalleryFullscreen> createState() => _GalleryFullscreenState();
+}
+
+class _GalleryFullscreenState extends State<_GalleryFullscreen> {
+  late final PageController _ctrl;
+  late int _index;
+
+  @override
+  void initState() {
+    super.initState();
+    _index = widget.initialIndex;
+    _ctrl = PageController(initialPage: _index);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  ImageProvider _provider(String path) {
+    return path.startsWith('http')
+        ? NetworkImage(path)
+        : AssetImage(path) as ImageProvider;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Slajdy z pinch-to-zoom
+          PageView.builder(
+            controller: _ctrl,
+            itemCount: widget.images.length,
+            onPageChanged: (i) => setState(() => _index = i),
+            itemBuilder: (_, i) {
+              final img = widget.images[i];
+              return Center(
+                child: Hero(
+                  tag: 'gallery-hero-$img',
+                  child: InteractiveViewer(
+                    panEnabled: true,
+                    minScale: 1.0,
+                    maxScale: 5.0,
+                    child: Image(
+                      image: _provider(img),
+                      fit: BoxFit.contain, // pokaż CAŁE zdjęcie
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+
+          // Pasek górny: zamknij + licznik
+          SafeArea(
+            child: Row(
+              children: [
+                const SizedBox(width: 8),
+                Material(
+                  color: Colors.black54,
+                  shape: const CircleBorder(),
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  margin: const EdgeInsets.only(right: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '${_index + 1} / ${widget.images.length}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Strzałki (opcjonalnie na desktopie)
+          if (widget.images.length > 1) ...[
+            Positioned.fill(
+              child: IgnorePointer(
+                ignoring: false,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _FsNavBtn(
+                      icon: Icons.chevron_left,
+                      onTap: () {
+                        final prev =
+                            (_index - 1).clamp(0, widget.images.length - 1);
+                        _ctrl.animateToPage(
+                          prev,
+                          duration: const Duration(milliseconds: 220),
+                          curve: Curves.easeOut,
+                        );
+                      },
+                    ),
+                    _FsNavBtn(
+                      icon: Icons.chevron_right,
+                      onTap: () {
+                        final next =
+                            (_index + 1).clamp(0, widget.images.length - 1);
+                        _ctrl.animateToPage(
+                          next,
+                          duration: const Duration(milliseconds: 220),
+                          curve: Curves.easeOut,
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _FsNavBtn extends StatelessWidget {
+  const _FsNavBtn({required this.icon, required this.onTap});
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Material(
+        color: Colors.black38,
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Icon(icon, color: Colors.white, size: 36),
+          ),
         ),
       ),
     );
