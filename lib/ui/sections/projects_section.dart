@@ -44,6 +44,10 @@ Zakres prac obejmował:
         gallery: [
           'assets/images/proj1_1.jpg',
           'assets/images/proj1_2.jpg',
+          'assets/images/proj1_3.jpg',
+          'assets/images/proj1_4.jpg',
+          'assets/images/proj1_5.jpg',
+          'assets/images/proj1_6.jpg',
         ],
       ),
       const Project(
