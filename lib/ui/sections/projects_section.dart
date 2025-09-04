@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class Project {
@@ -248,6 +249,18 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
     super.dispose();
   }
 
+  void _openFullscreen(int index, List<String> images) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => _GalleryFullscreen(
+          images: images,
+          initialIndex: index,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final p = widget.project;
@@ -286,26 +299,41 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                         controller: _page,
                         itemCount: gallery.length,
                         onPageChanged: (i) => setState(() => _i = i),
-                        itemBuilder: (_, i) => GestureDetector(
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              fullscreenDialog: true,
-                              builder: (_) => _GalleryFullscreen(
-                                images: gallery,
-                                initialIndex: i,
+                        itemBuilder: (_, i) => Stack(
+                          children: [
+                            // Tap/ikonka otwierają pełny ekran dla bieżącego zdjęcia
+                            GestureDetector(
+                              onTap: () => _openFullscreen(i, gallery),
+                              child: Hero(
+                                tag: 'gallery-hero-${gallery[i]}',
+                                child: Ink.image(
+                                  image: _imgProvider(gallery[i]),
+                                  fit: BoxFit.cover,
+                                  child: const SizedBox.expand(),
+                                ),
                               ),
                             ),
-                          ),
-                          child: Hero(
-                            tag: 'gallery-hero-${gallery[i]}',
-                            child: Ink.image(
-                              image: _imgProvider(gallery[i]),
-                              fit: BoxFit.cover,
-                              child: const SizedBox.expand(),
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: Material(
+                                color: Colors.black45,
+                                shape: const CircleBorder(),
+                                child: InkWell(
+                                  customBorder: const CircleBorder(),
+                                  onTap: () => _openFullscreen(i, gallery),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Icon(Icons.open_in_full,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
+                      // Strzałki na podglądzie
                       Positioned.fill(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -313,8 +341,7 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                             _NavBtn(
                               icon: Icons.chevron_left,
                               onTap: () {
-                                final prev =
-                                    (_i - 1).clamp(0, gallery.length - 1);
+                                final prev = math.max(0, _i - 1);
                                 _page.animateToPage(
                                   prev,
                                   duration: const Duration(milliseconds: 220),
@@ -326,7 +353,7 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                               icon: Icons.chevron_right,
                               onTap: () {
                                 final next =
-                                    (_i + 1).clamp(0, gallery.length - 1);
+                                    math.min(gallery.length - 1, _i + 1);
                                 _page.animateToPage(
                                   next,
                                   duration: const Duration(milliseconds: 220),
@@ -360,6 +387,59 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                     ),
                   ),
                 ),
+              const SizedBox(height: 12),
+              // Pasek miniaturek
+              if (gallery.length > 1)
+                SizedBox(
+                  height: 72,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: gallery.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    itemBuilder: (_, idx) {
+                      final selected = idx == _i;
+                      return GestureDetector(
+                        onTap: () {
+                          _page.animateToPage(
+                            idx,
+                            duration: const Duration(milliseconds: 220),
+                            curve: Curves.easeOut,
+                          );
+                        },
+                        onDoubleTap: () => _openFullscreen(idx, gallery),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Stack(
+                            children: [
+                              Image(
+                                image: _imgProvider(gallery[idx]),
+                                width: 110,
+                                height: 72,
+                                fit: BoxFit.cover,
+                              ),
+                              if (selected)
+                                Positioned.fill(
+                                  child: IgnorePointer(
+                                    ignoring: true,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               const SizedBox(height: 16),
             ],
             const SizedBox(height: 6),
@@ -387,9 +467,10 @@ class _NavBtn extends StatelessWidget {
       child: InkWell(
         customBorder: const CircleBorder(),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(6),
-          child: Icon(icon, color: Colors.white),
+        child: const Padding(
+          padding: EdgeInsets.all(6),
+          child: Icon(Icons.chevron_right,
+              color: Colors.white), // ikonę nadpisujemy zewnętrznie
         ),
       ),
     );
@@ -434,30 +515,44 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Slajdy z pinch-to-zoom
           PageView.builder(
             controller: _ctrl,
             itemCount: widget.images.length,
             onPageChanged: (i) => setState(() => _index = i),
             itemBuilder: (_, i) {
               final img = widget.images[i];
+              final transformationController = TransformationController();
+
               return Center(
                 child: Hero(
                   tag: 'gallery-hero-$img',
-                  child: InteractiveViewer(
-                    panEnabled: true,
-                    minScale: 1.0,
-                    maxScale: 5.0,
-                    child: Image(
-                      image: _provider(img),
-                      fit: BoxFit.contain, // pokaż CAŁE zdjęcie
+                  child: GestureDetector(
+                    // double-tap: szybkie x2 / powrót
+                    onDoubleTap: () {
+                      final m = transformationController.value;
+                      final isZoomed = m.getMaxScaleOnAxis() > 1.01;
+                      if (isZoomed) {
+                        transformationController.value = Matrix4.identity();
+                      } else {
+                        transformationController.value = Matrix4.identity()
+                          ..scale(2.0);
+                      }
+                    },
+                    child: InteractiveViewer(
+                      transformationController: transformationController,
+                      panEnabled: true,
+                      minScale: 1.0,
+                      maxScale: 5.0,
+                      child: Image(
+                        image: _provider(img),
+                        fit: BoxFit.contain, // pokaż całe zdjęcie
+                      ),
                     ),
                   ),
                 ),
               );
             },
           ),
-
           // Pasek górny: zamknij + licznik
           SafeArea(
             child: Row(
@@ -488,8 +583,7 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
               ],
             ),
           ),
-
-          // Strzałki (opcjonalnie na desktopie)
+          // Strzałki na pełnym ekranie (desktop itp.)
           if (widget.images.length > 1) ...[
             Positioned.fill(
               child: IgnorePointer(
@@ -500,8 +594,7 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
                     _FsNavBtn(
                       icon: Icons.chevron_left,
                       onTap: () {
-                        final prev =
-                            (_index - 1).clamp(0, widget.images.length - 1);
+                        final prev = math.max(0, _index - 1);
                         _ctrl.animateToPage(
                           prev,
                           duration: const Duration(milliseconds: 220),
@@ -513,7 +606,7 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
                       icon: Icons.chevron_right,
                       onTap: () {
                         final next =
-                            (_index + 1).clamp(0, widget.images.length - 1);
+                            math.min(widget.images.length - 1, _index + 1);
                         _ctrl.animateToPage(
                           next,
                           duration: const Duration(milliseconds: 220),

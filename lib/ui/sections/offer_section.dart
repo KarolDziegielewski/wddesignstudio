@@ -99,45 +99,79 @@ class _OfferTileState extends State<_OfferTile> {
   Widget build(BuildContext context) {
     final lift = _hover ? -1.0 : 0.0;
 
-    return MouseRegion(
-      onEnter: (_) => _openOverlay(),
-      onExit: (_) => _closeOverlay(),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 120),
-        transform: Matrix4.translationValues(0, lift, 0),
-        child: Stack(
-          clipBehavior: Clip.none, // pozwala overlayowi wyjść poza kafelek
-          children: [
-            _BaseCard(
-              title: widget.title,
-              details: widget.details,
-              onTap: () {
-                // mobile: tap rozwinie/zwinie opis; jeśli chcesz akcję onAsk — wywołaj obie
-                setState(() => _expanded = !_expanded);
-                widget.onTileTap?.call();
-              },
-            ),
-            // Overlay z pełnym opisem (nad kafelkiem)
-            Positioned(
-              left: -6, right: -6, bottom: 6,
-              // wysuwa się do góry, żeby nie powiększać layoutu siatki
-              child: IgnorePointer(
-                ignoring: !_expanded,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 120),
-                  opacity: _expanded ? 1 : 0,
-                  child: AnimatedScale(
+    return WillPopScope(
+      // Android "wstecz" zamyka najpierw overlay
+      onWillPop: () async {
+        if (_expanded) {
+          _closeOverlay();
+          return false;
+        }
+        return true;
+      },
+      child: MouseRegion(
+        onEnter: (_) => _openOverlay(),
+        onExit: (_) => _closeOverlay(),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          transform: Matrix4.translationValues(0, lift, 0),
+          child: Stack(
+            clipBehavior: Clip.none, // pozwala overlayowi wyjść poza kafelek
+            children: [
+              // Karta bazowa
+              _BaseCard(
+                title: widget.title,
+                details: widget.details,
+                onTap: () {
+                  // mobile: tap przełącza; jeśli chcesz wywołać akcję onAsk – zostaw jak jest
+                  setState(() => _expanded = !_expanded);
+                  widget.onTileTap?.call();
+                },
+              ),
+
+              // >>> BACKDROP DO ZAMYKANIA (pełnoekranowy, pod chmurką)
+              if (_expanded)
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: _closeOverlay, // tap gdziekolwiek poza chmurką
+                    // opcjonalnie "przeciągnij w dół, by zamknąć"
+                    onVerticalDragUpdate: (d) {
+                      if (d.primaryDelta != null && d.primaryDelta! > 8) {
+                        _closeOverlay();
+                      }
+                    },
+                    child: const SizedBox.expand(),
+                  ),
+                ),
+
+              // Overlay z pełnym opisem (nad kafelkiem)
+              Positioned(
+                left: -6,
+                right: -6,
+                bottom: 6,
+                child: IgnorePointer(
+                  ignoring: !_expanded,
+                  child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 120),
-                    scale: _expanded ? 1 : 0.98,
-                    child: _ExpandedOverlay(
-                      title: widget.title,
-                      details: widget.details,
+                    opacity: _expanded ? 1 : 0,
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 120),
+                      scale: _expanded ? 1 : 0.98,
+                      child: GestureDetector(
+                        // tap po samej chmurce NIE zamyka (zatrzymujemy propagację)
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {},
+                        child: _ExpandedOverlay(
+                          title: widget.title,
+                          details: widget.details,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

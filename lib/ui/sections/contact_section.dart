@@ -48,7 +48,7 @@ class _ContactSectionState extends State<ContactSection> {
     final email = _emailCtrl.text.trim();
     final msg = _msgCtrl.text.trim();
 
-    final subject =
+    const subject =
         'Kocham siostrzyczke (wiadomość z formularza ze stronki skibidi)';
     final signature = '\n\n— $name ($email)';
     final uri = _mailtoUri(
@@ -59,7 +59,7 @@ class _ContactSectionState extends State<ContactSection> {
 
     setState(() => _sending = true);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Przygotowuję wiadomość e-mail…')),
+      const SnackBar(content: Text('Przygotowuję wiadomość e-mail…')),
     );
 
     try {
@@ -214,10 +214,10 @@ class _ContactSectionState extends State<ContactSection> {
               ),
             ),
             const SizedBox(height: 12),
-            Wrap(
+            const Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: const [
+              children: [
                 Chip(label: Text('PL / EN / IT')),
               ],
             ),

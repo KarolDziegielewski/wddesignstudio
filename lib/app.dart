@@ -60,11 +60,11 @@ class _LandingPageState extends State<LandingPage> {
       isScrollControlled: false,
       backgroundColor: Theme.of(context).colorScheme.surface,
       showDragHandle: true,
-      builder: (ctx) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      builder: (ctx) => const Padding(
+        padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             SizedBox(height: 8),
             LangSwitcher(),
             SizedBox(height: 8),
@@ -684,8 +684,8 @@ class _ScrollHintState extends State<_ScrollHint>
         opacity: Tween(begin: .4, end: 1.0).animate(
           CurvedAnimation(parent: _c, curve: Curves.easeInOut),
         ),
-        child: Column(
-          children: const [
+        child: const Column(
+          children: [
             Icon(Icons.keyboard_arrow_down, color: Colors.white70, size: 28),
             SizedBox(height: 4),
             Icon(Icons.keyboard_arrow_down, color: Colors.white70, size: 28),
