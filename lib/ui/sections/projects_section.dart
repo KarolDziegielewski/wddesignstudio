@@ -1,5 +1,9 @@
+// ================================
+// lib/sections/projects/section.dart
+// ================================
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:wddesignstudio/l10n/app_localizations.dart';
 
 class Project {
   final String title;
@@ -17,32 +21,23 @@ class Project {
   });
 }
 
-class ProjectsSection extends StatefulWidget {
+class ProjectsSection extends StatelessWidget {
   const ProjectsSection({super.key});
-  @override
-  State<ProjectsSection> createState() => _ProjectsSectionState();
-}
-
-class _ProjectsSectionState extends State<ProjectsSection> {
-  late List<Project> projects;
 
   @override
-  void initState() {
-    super.initState();
-    projects = [
-      const Project(
-        title: 'Albion Drive',
-        short: 'Renowacja i rozbudowa dwupiętrowego domu w stylu wiktoriańskim',
-        longDescription:
-            '''Projekt dotyczył renowacji i rozbudowy dwupiętrowego domu w stylu wiktoriańskim, położonego na końcu szeregowej zabudowy, zlokalizowanego w dzielnicy Albion Square Conservation Area.
+  Widget build(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
+    final cross = w < 600 ? 1 : (w < 1000 ? 2 : 3);
 
-Zakres prac obejmował:
-• Budowę nowego parterowego przedłużenia boczno-tylnego w miejscu istniejącej rozbudowy.
-• Wymianę świetlika dachowego oraz dodanie nowego okna dachowego na poddaszu.
-• Ogólną renowację – stworzenie nowoczesnego, wysokiej jakości domu rodzinnego,
-  przy jednoczesnym poszanowaniu istniejących walorów architektonicznych.''',
+    // Budujemy listę projektów NA PODSTAWIE lokalizacji
+    final t = S.of(context);
+    final projects = <Project>[
+      Project(
+        title: t.prj1Title,
+        short: t.prj1Short,
+        longDescription: t.prj1Long,
         coverImage: 'assets/images/mini_proj1.jpg',
-        gallery: [
+        gallery: const [
           'assets/images/proj1_1.jpg',
           'assets/images/proj1_2.jpg',
           'assets/images/proj1_3.jpg',
@@ -51,46 +46,34 @@ Zakres prac obejmował:
           'assets/images/proj1_6.jpg',
         ],
       ),
-      const Project(
-        title: 'Copper I',
-        short: 'Projekt nowoczesnej łazienki',
-        longDescription:
-            '''Projekt nowoczesnej łazienki, w której połączenie miedzianych akcentów, matowej czerni oraz bieli tworzy wyrazisty, a zarazem ponadczasowy charakter.
-Przygotowałam dwie propozycje tej łazienki (po lewej i prawej), aby dać klientowi możliwość wyboru i wspólnie wypracować najlepsze rozwiązanie. W swojej
-pracy stawiam na otwartość, elastyczność i aktywny kontakt z inwestorem, tak aby projekt był w pełni dopasowany do jego potrzeb.
-        ''',
+      Project(
+        title: t.prj2Title,
+        short: t.prj2Short,
+        longDescription: t.prj2Long,
         coverImage: 'assets/images/mini_proj2.jpg',
-        gallery: [
+        gallery: const [
           'assets/images/proj2_1.jpg',
           'assets/images/proj2_2.jpg',
           'assets/images/proj2_3.jpg',
         ],
       ),
-      const Project(
-        title: 'Copper II',
-        short: 'Projekt nowoczesnej łazienki',
-        longDescription:
-            '''Projekt nowoczesnej łazienki, w której połączenie miedzianych akcentów, matowej czerni oraz bieli tworzy wyrazisty, a zarazem ponadczasowy charakter.
-Przygotowałam dwie propozycje tej łazienki (po lewej i prawej), aby dać klientowi możliwość wyboru i wspólnie wypracować najlepsze rozwiązanie. W swojej
-pracy stawiam na otwartość, elastyczność i aktywny kontakt z inwestorem, tak aby projekt był w pełni dopasowany do jego potrzeb.
-        ''',
+      Project(
+        title: t.prj3Title,
+        short: t.prj3Short,
+        longDescription: t.prj3Long,
         coverImage: 'assets/images/mini_proj3.jpg',
-        gallery: [
+        gallery: const [
           'assets/images/proj3_1.jpg',
           'assets/images/proj3_2.jpg',
           'assets/images/proj3_3.jpg',
         ],
       ),
-      const Project(
-        title: 'Olive Green Elegance',
-        short: 'Kuchnia dla dużej rodziny',
-        longDescription:
-            '''Kuchnia dla dużej rodziny. Oliwkowa zieleń w połączeniu ze szczotkowanym złotem i marmurowymi akcentami tworzy elegancką, ale i ciepłą atmosferę.
-Wyspa łączy przestrzeń kuchni z salonem, sprzyjając wspólnemu spędzaniu czasu.
-Na prośbę Klientki w projekcie znajdują się słupek z piekarnikiem oraz miejsce
-na dwudrzwiową lodówkę, zapewniające maksymalną funkcjonalność i komfort.''',
+      Project(
+        title: t.prj4Title,
+        short: t.prj4Short,
+        longDescription: t.prj4Long,
         coverImage: 'assets/images/mini_proj4.jpg',
-        gallery: [
+        gallery: const [
           'assets/images/proj4_1.jpg',
           'assets/images/proj4_2.jpg',
           'assets/images/proj4_3.jpg',
@@ -101,12 +84,6 @@ na dwudrzwiową lodówkę, zapewniające maksymalną funkcjonalność i komfort.
         ],
       ),
     ];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final w = MediaQuery.of(context).size.width;
-    final cross = w < 600 ? 1 : (w < 1000 ? 2 : 3);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,14 +100,14 @@ na dwudrzwiową lodówkę, zapewniające maksymalną funkcjonalność i komfort.
           itemCount: projects.length,
           itemBuilder: (_, i) => _ProjectCard(
             project: projects[i],
-            onTap: () => _openProject(projects[i]),
+            onTap: () => _openProject(context, projects[i]),
           ),
         ),
       ],
     );
   }
 
-  void _openProject(Project p) => showModalBottomSheet(
+  void _openProject(BuildContext context, Project p) => showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
@@ -301,7 +278,6 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                         onPageChanged: (i) => setState(() => _i = i),
                         itemBuilder: (_, i) => Stack(
                           children: [
-                            // Tap/ikonka otwierają pełny ekran dla bieżącego zdjęcia
                             GestureDetector(
                               onTap: () => _openFullscreen(i, gallery),
                               child: Hero(
@@ -333,7 +309,6 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                           ],
                         ),
                       ),
-                      // Strzałki na podglądzie
                       Positioned.fill(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -388,7 +363,6 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                   ),
                 ),
               const SizedBox(height: 12),
-              // Pasek miniaturek
               if (gallery.length > 1)
                 SizedBox(
                   height: 72,
@@ -469,8 +443,7 @@ class _NavBtn extends StatelessWidget {
         onTap: onTap,
         child: const Padding(
           padding: EdgeInsets.all(6),
-          child: Icon(Icons.chevron_right,
-              color: Colors.white), // ikonę nadpisujemy zewnętrznie
+          child: Icon(Icons.chevron_right, color: Colors.white),
         ),
       ),
     );
@@ -527,7 +500,6 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
                 child: Hero(
                   tag: 'gallery-hero-$img',
                   child: GestureDetector(
-                    // double-tap: szybkie x2 / powrót
                     onDoubleTap: () {
                       final m = transformationController.value;
                       final isZoomed = m.getMaxScaleOnAxis() > 1.01;
@@ -545,7 +517,7 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
                       maxScale: 5.0,
                       child: Image(
                         image: _provider(img),
-                        fit: BoxFit.contain, // pokaż całe zdjęcie
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),
@@ -553,7 +525,6 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
               );
             },
           ),
-          // Pasek górny: zamknij + licznik
           SafeArea(
             child: Row(
               children: [
@@ -583,7 +554,6 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
               ],
             ),
           ),
-          // Strzałki na pełnym ekranie (desktop itp.)
           if (widget.images.length > 1) ...[
             Positioned.fill(
               child: IgnorePointer(

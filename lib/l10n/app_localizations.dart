@@ -292,6 +292,73 @@ Profilazione: nessuna decisione automatizzata, solo analisi di base.''');
       'Yes. In addition to private residential projects, I also design show apartments, rental properties, and selected public spaces. I provide contractor-ready documentation and visualizations that help increase the market appeal of a property.',
       'Sì. Oltre ai progetti residenziali privati, realizzo anche interni per appartamenti campione, immobili destinati all’affitto e alcuni spazi pubblici. Fornisco documentazione tecnica completa e visualizzazioni che aumentano l’attrattiva della proprietà sul mercato.');
 
+  // --- 1) Albion Drive ---
+  String get prj1Title => _t('Albion Drive', 'Albion Drive', 'Albion Drive');
+  String get prj1Short => _t(
+      'Renowacja i rozbudowa dwupiętrowego domu w stylu wiktoriańskim',
+      'Refurbishment and extension of a two‑storey Victorian end‑of‑terrace house',
+      'Ristrutturazione e ampliamento di una casa vittoriana su due piani a schiera di testa');
+  String get prj1Long => _t(
+      '''Projekt dotyczył renowacji i rozbudowy dwupiętrowego domu w stylu wiktoriańskim, położonego na końcu szeregowej zabudowy, zlokalizowanego w dzielnicy Albion Square Conservation Area.
+
+Zakres prac obejmował:
+• Budowę nowego parterowego przedłużenia boczno‑tylnego w miejscu istniejącej rozbudowy.
+• Wymianę świetlika dachowego oraz dodanie nowego okna dachowego na poddaszu.
+• Ogólną renowację – stworzenie nowoczesnego, wysokiej jakości domu rodzinnego,
+  przy jednoczesnym poszanowaniu istniejących walorów architektonicznych.''',
+      '''The project involved refurbishing and extending a two‑storey Victorian end‑of‑terrace house located within the Albion Square Conservation Area.
+
+Scope of works included:
+• A new single‑storey side‑and‑rear extension replacing an existing add‑on.
+• Replacement of the rooflight and a new skylight to the loft.
+• General renovation to create a contemporary, high‑quality family home while respecting the building’s historic character.''',
+      '''Il progetto ha riguardato la ristrutturazione e l’ampliamento di una casa vittoriana su due piani, capofila di una schiera, situata nell’area tutelata di Albion Square.
+
+L’intervento ha compreso:
+• Un nuovo ampliamento a un piano sul lato e sul retro, in sostituzione del corpo esistente.
+• La sostituzione del lucernario e l’aggiunta di una nuova finestra a tetto nel sottotetto.
+• Un restauro generale per creare una casa familiare contemporanea e di alta qualità, nel rispetto del carattere storico dell’edificio.''');
+
+  // --- 2) Copper I ---
+  String get prj2Title => _t('Copper I', 'Copper I', 'Copper I');
+  String get prj2Short => _t('Projekt nowoczesnej łazienki',
+      'Contemporary bathroom design', 'Bagno contemporaneo – progetto');
+  String get prj2Long => _t(
+      '''Projekt nowoczesnej łazienki, w której połączenie miedzianych akcentów, matowej czerni oraz bieli tworzy wyrazisty, a zarazem ponadczasowy charakter.
+Przygotowałam dwie propozycje tej łazienki (po lewej i prawej), aby dać klientowi możliwość wyboru i wspólnie wypracować najlepsze rozwiązanie. W swojej pracy stawiam na otwartość, elastyczność i aktywny kontakt z inwestorem, tak aby projekt był w pełni dopasowany do jego potrzeb.''',
+      '''A contemporary bathroom concept where copper accents, matte black and white combine into a bold yet timeless palette.
+I prepared two alternative layouts (left and right) to give the client a real choice and refine the best solution together. My process emphasises openness, flexibility and close communication so the design fits the client’s needs perfectly.''',
+      '''Un concept di bagno contemporaneo in cui accenti ramati, nero opaco e bianco creano un insieme deciso ma senza tempo.
+Ho preparato due proposte alternative (sinistra e destra) per offrire al cliente una scelta reale e definire insieme la soluzione migliore. Il mio metodo privilegia apertura, flessibilità e dialogo costante, così il progetto è perfettamente calibrato sulle esigenze del committente.''');
+
+  // --- 3) Copper II ---
+  String get prj3Title => _t('Copper II', 'Copper II', 'Copper II');
+  String get prj3Short => _t('Projekt nowoczesnej łazienki',
+      'Contemporary bathroom design', 'Bagno contemporaneo – progetto');
+  String get prj3Long => _t(
+      '''Projekt nowoczesnej łazienki, w której połączenie miedzianych akcentów, matowej czerni oraz bieli tworzy wyrazisty, a zarazem ponadczasowy charakter.
+Przygotowałam dwie propozycje tej łazienki (po lewej i prawej), aby dać klientowi możliwość wyboru i wspólnie wypracować najlepsze rozwiązanie. W swojej pracy stawiam na otwartość, elastyczność i aktywny kontakt z inwestorem, tak aby projekt był w pełni dopasowany do jego potrzeb.''',
+      '''A contemporary bathroom concept where copper accents, matte black and white form a striking yet timeless scheme.
+Two variants (left and right) let the client choose and co‑create the optimal solution. I prioritise openness, flexibility and active collaboration to ensure the design truly fits the brief.''',
+      '''Concept di bagno contemporaneo con accenti in rame, nero opaco e bianco per un carattere deciso ma intramontabile.
+Ho presentato due varianti (sinistra e destra) per consentire al cliente di scegliere e co‑progettare la soluzione ideale. Punto su apertura, flessibilità e collaborazione attiva per un risultato davvero su misura.''');
+
+  // --- 4) Olive Green Elegance ---
+  String get prj4Title => _t(
+      'Olive Green Elegance', 'Olive Green Elegance', 'Olive Green Elegance');
+  String get prj4Short => _t('Kuchnia dla dużej rodziny',
+      'A family‑sized kitchen', 'Cucina per una famiglia numerosa');
+  String get prj4Long => _t(
+      '''Kuchnia dla dużej rodziny. Oliwkowa zieleń w połączeniu ze szczotkowanym złotem i marmurowymi akcentami tworzy elegancką, ale i ciepłą atmosferę.
+Wyspa łączy przestrzeń kuchni z salonem, sprzyjając wspólnemu spędzaniu czasu.
+Na prośbę Klientki w projekcie znajdują się słupek z piekarnikiem oraz miejsce na dwudrzwiową lodówkę, zapewniające maksymalną funkcjonalność i komfort.''',
+      '''A kitchen designed for a large family. Olive green paired with brushed gold and marble accents creates an elegant yet warm atmosphere.
+A central island connects the kitchen with the living area to encourage time together.
+At the client’s request, the layout includes a tall oven unit and space for a double‑door fridge to maximise everyday functionality and comfort.''',
+      '''Cucina pensata per una famiglia numerosa. Il verde oliva, abbinato all’oro satinato e a dettagli in marmo, genera un’atmosfera elegante ma accogliente.
+L’isola centrale mette in relazione la cucina con il soggiorno, favorendo i momenti condivisi.
+Su richiesta della cliente, il progetto prevede una colonna forno e lo spazio per un frigorifero a doppia porta per la massima praticità e comfort.''');
+
   String _t(String pl, String en, String it) => switch (locale) {
         AppLocale.pl => pl,
         AppLocale.en => en,
