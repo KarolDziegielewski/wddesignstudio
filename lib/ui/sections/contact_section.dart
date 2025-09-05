@@ -1,11 +1,12 @@
-import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../l10n/app_localizations.dart';
 
+/// Sekcja kontaktowa z formularzem i informacjami kontaktowymi
 class ContactSection extends StatefulWidget {
   const ContactSection({super.key});
+
   @override
   State<ContactSection> createState() => _ContactSectionState();
 }
@@ -25,6 +26,7 @@ class _ContactSectionState extends State<ContactSection> {
     super.dispose();
   }
 
+  /// Tworzy URI mailto z podanymi parametrami
   Uri _mailtoUri({
     required String to,
     String? subject,
@@ -40,6 +42,7 @@ class _ContactSectionState extends State<ContactSection> {
     );
   }
 
+  /// Obsługuje wysyłanie formularza kontaktowego przez e-mail
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
@@ -76,8 +79,8 @@ class _ContactSectionState extends State<ContactSection> {
     }
   }
 
+  /// Otwiera WhatsApp z podanym numerem telefonu
   Future<void> _openWhatsApp() async {
-    // numer bez plusa/spacji
     const phone = '48795186301';
     final url = Uri.parse('https://wa.me/$phone?text=');
     try {
@@ -96,147 +99,148 @@ class _ContactSectionState extends State<ContactSection> {
   @override
   Widget build(BuildContext context) {
     final t = S.of(context);
+
+    // Formularz kontaktowy
+    final form = Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            t.contactForm,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _nameCtrl,
+            decoration: InputDecoration(
+              labelText: t.name,
+              hintText: t.enterName,
+            ),
+            textInputAction: TextInputAction.next,
+            autofillHints: const [AutofillHints.name],
+            validator: (v) =>
+                (v == null || v.trim().isEmpty) ? t.enterName : null,
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _emailCtrl,
+            decoration: InputDecoration(
+              labelText: t.email,
+              hintText: 'you@example.com',
+            ),
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            autofillHints: const [AutofillHints.email],
+            validator: (v) {
+              final value = v?.trim() ?? '';
+              if (value.isEmpty) return t.enterEmail;
+              final r = RegExp(r"^[^\s@]+@[^\s@]+\.[^\s@]+$");
+              if (!r.hasMatch(value)) return t.incorrectEmail;
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _msgCtrl,
+            decoration: InputDecoration(
+              labelText: t.message,
+              hintText: t.messageHint,
+            ),
+            maxLines: 6,
+            minLines: 4,
+            textInputAction: TextInputAction.newline,
+            validator: (v) =>
+                (v == null || v.trim().isEmpty) ? t.enterMessage : null,
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: 220,
+            child: FilledButton.icon(
+              onPressed: _sending ? null : _submit,
+              icon: _sending
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.send),
+              label: Text(t.send),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // Informacje kontaktowe
+    final info = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _InfoCard(
+          title: t.phone,
+          leading: const FaIcon(
+            FontAwesomeIcons.whatsapp,
+            color: Color(0xFF25D366),
+            size: 22,
+          ),
+          content: InkWell(
+            onTap: _openWhatsApp,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 2),
+              child: Text(
+                '+48 795 186 301',
+                style: TextStyle(
+                  color: Colors.teal,
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        _InfoCard(
+          title: 'E-mail',
+          leading: const Icon(Icons.mail_outline, size: 22),
+          content: SelectableText(
+            'studio@dziegielewska.info',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ),
+        const SizedBox(height: 12),
+        const Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            Chip(label: Text('PL / EN / IT')),
+          ],
+        ),
+      ],
+    );
+
+    // Układ responsywny: szeroki ekran - rząd, wąski - kolumna
     return LayoutBuilder(
       builder: (context, c) {
         final wide = c.maxWidth > 900;
-
-        final form = Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(t.contactForm,
-                  style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 16),
-
-              // Imię i nazwisko
-              TextFormField(
-                controller: _nameCtrl,
-                decoration: InputDecoration(
-                  labelText: t.name,
-                  hintText: t.enterName,
-                ),
-                textInputAction: TextInputAction.next,
-                autofillHints: const [AutofillHints.name],
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? t.enterName : null,
-              ),
-              const SizedBox(height: 12),
-
-              // E-mail
-              TextFormField(
-                controller: _emailCtrl,
-                decoration: InputDecoration(
-                  labelText: t.email,
-                  hintText: 'you@example.com',
-                ),
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                autofillHints: const [AutofillHints.email],
-                validator: (v) {
-                  final value = v?.trim() ?? '';
-                  if (value.isEmpty) return t.enterEmail;
-                  // prosty i bezpieczny regex (z escapami + domena)
-                  final r = RegExp(r"^[^\s@]+@[^\s@]+\.[^\s@]+$");
-                  if (!r.hasMatch(value)) return t.incorrectEmail;
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-
-              // Wiadomość
-              TextFormField(
-                controller: _msgCtrl,
-                decoration: InputDecoration(
-                  labelText: t.message,
-                  hintText: t.messageHint,
-                ),
-                maxLines: 6,
-                minLines: 4,
-                textInputAction: TextInputAction.newline,
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? t.enterMessage : null,
-              ),
-              const SizedBox(height: 16),
-
-              // Wyślij
-              SizedBox(
-                width: 220,
-                child: FilledButton.icon(
-                  onPressed: _sending ? null : _submit,
-                  icon: _sending
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.send),
-                  label: Text(t.send),
-                ),
-              ),
-            ],
-          ),
-        );
-
-        final info = Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _InfoCard(
-              title: t.phone,
-              leading: const FaIcon(
-                FontAwesomeIcons.whatsapp,
-                color: Color(0xFF25D366),
-                size: 22,
-              ),
-              content: InkWell(
-                onTap: _openWhatsApp,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 2),
-                  child: Text(
-                    '+48 795 186 301',
-                    style: TextStyle(
-                      color: Colors.teal,
-                      fontWeight: FontWeight.w600,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            _InfoCard(
-              title: 'E-mail',
-              leading: const Icon(Icons.mail_outline, size: 22),
-              content: SelectableText(
-                'studio@dziegielewska.info',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                Chip(label: Text('PL / EN / IT')),
-              ],
-            ),
-          ],
-        );
-
         if (wide) {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                  flex: 2,
-                  child:
-                      Padding(padding: const EdgeInsets.all(0), child: form)),
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(0),
+                  child: form,
+                ),
+              ),
               const SizedBox(width: 24),
-              Expanded(flex: 1, child: info),
+              Expanded(
+                flex: 1,
+                child: info,
+              ),
             ],
           );
         } else {
-          // MOBILE: wszystko w jednej kolumnie z oddzieleniem
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -253,8 +257,10 @@ class _ContactSectionState extends State<ContactSection> {
   }
 }
 
+/// Separator dla widoku mobilnego
 class _MobileDivider extends StatelessWidget {
   const _MobileDivider();
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -270,6 +276,7 @@ class _MobileDivider extends StatelessWidget {
   }
 }
 
+/// Karta z informacją kontaktową (np. telefon, e-mail)
 class _InfoCard extends StatelessWidget {
   const _InfoCard({
     required this.title,
@@ -290,7 +297,11 @@ class _InfoCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
-          BoxShadow(blurRadius: 20, spreadRadius: -8, color: Color(0x1A000000)),
+          BoxShadow(
+            blurRadius: 20,
+            spreadRadius: -8,
+            color: Color(0x1A000000),
+          ),
         ],
         color: cardColor,
       ),
@@ -303,7 +314,10 @@ class _InfoCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 content,
               ],

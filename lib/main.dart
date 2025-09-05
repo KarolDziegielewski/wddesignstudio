@@ -8,16 +8,24 @@ void main() {
   runApp(const WDDesignStudioRoot());
 }
 
+/// Główny widget aplikacji, zarządza stanem lokalizacji
 class WDDesignStudioRoot extends StatefulWidget {
   const WDDesignStudioRoot({super.key});
+
   @override
   State<WDDesignStudioRoot> createState() => _WDDesignStudioRootState();
 }
 
 class _WDDesignStudioRootState extends State<WDDesignStudioRoot> {
-  AppLocale _locale = AppLocale.pl; // domyślnie PL
+  // Aktualnie wybrana lokalizacja aplikacji
+  AppLocale _locale = AppLocale.pl;
 
-  void _onLocaleChanged(AppLocale locale) => setState(() => _locale = locale);
+  // Aktualizuje lokalizację po zmianie
+  void _onLocaleChanged(AppLocale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,18 +35,21 @@ class _WDDesignStudioRootState extends State<WDDesignStudioRoot> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'WD Design Studio',
-        theme: buildTheme(Brightness.light),
-        darkTheme: buildTheme(Brightness.dark),
-        themeMode: ThemeMode.light,
-        // Minimalna integracja z systemem lokalizacji Fluttera
-        locale: _locale.toLocale(),
-        supportedLocales: const [Locale('pl'), Locale('en'), Locale('it')],
+        theme: buildTheme(Brightness.light), // Motyw jasny
+        darkTheme: buildTheme(Brightness.dark), // Motyw ciemny
+        themeMode: ThemeMode.light, // Wymuszony motyw jasny
+        locale: _locale.toLocale(), // Ustawienie lokalizacji aplikacji
+        supportedLocales: const [
+          Locale('pl'),
+          Locale('en'),
+          Locale('it'),
+        ], // Obsługiwane lokalizacje
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
-        ],
-        home: const LandingPage(),
+        ], // Delegaty lokalizacyjne Fluttera
+        home: const LandingPage(), // Strona startowa aplikacji
       ),
     );
   }

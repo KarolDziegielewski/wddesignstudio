@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 
+/// OfferSection displays a list of offer tiles with a price badge and description.
 class OfferSection extends StatelessWidget {
   const OfferSection({super.key, this.onAsk});
   final void Function(String title)? onAsk;
+
+  static const brown = Color(0xFF6D4C41);
+  static const brownLight = Color(0xFFBCAAA4);
+  static const brownLighter = Color(0xFFD7CCC8);
 
   @override
   Widget build(BuildContext context) {
@@ -18,55 +23,70 @@ class OfferSection extends StatelessWidget {
       (t.offer7title, t.offer7desc),
       (t.offer8title, t.offer8desc),
     ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Section title
         Text(
           t.offerHint,
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 18),
-
-        // >>> DODANY DUŻY NAPIS O CENIE (bardziej fancy) <<<
+        // Price badge with gradient background and shimmer effect
         Center(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFD7CCC8), Color(0xFFBCAAA4)],
+                colors: [
+                  Color(0xFFF5E9E2),
+                  Color(0xFFEAD1C0),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF6D4C41).withOpacity(0.18),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+                  color: const Color(0xFF6D4C41).withOpacity(0.25),
+                  blurRadius: 18,
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
-            child: Text(
-              t.offerPrice,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 134, 84, 67), // brąz
-                fontSize: 32,
-                letterSpacing: 1.2,
-                shadows: [
-                  Shadow(
-                    color: Colors.white.withOpacity(0.7),
-                    offset: const Offset(0, 2),
-                    blurRadius: 6,
-                  ),
+            child: ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [
+                  Color(0xFF8D6E63),
+                  Color(0xFFD7CCC8),
+                  Color(0xFF8D6E63),
                 ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ).createShader(bounds),
+              child: Text(
+                t.offerPrice,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 36,
+                  letterSpacing: 1.4,
+                  color: const Color.fromARGB(255, 114, 69, 1),
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.15),
+                      offset: const Offset(0, 3),
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 8),
-
+        const SizedBox(height: 12),
+        // Grid of offer tiles
         LayoutBuilder(
           builder: (context, c) {
             const maxTileWidth = 520.0;
@@ -92,11 +112,12 @@ class OfferSection extends StatelessWidget {
           },
         ),
         const SizedBox(height: 10),
+        // Section footer description
         Text(
           t.offerDown,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontStyle: FontStyle.italic,
-                color: const Color(0xFF6D4C41),
+                color: brown,
               ),
         ),
       ],
@@ -104,6 +125,7 @@ class OfferSection extends StatelessWidget {
   }
 }
 
+/// Interactive offer tile with hover and tap expansion.
 class _OfferTile extends StatefulWidget {
   const _OfferTile({
     required this.title,
@@ -121,30 +143,59 @@ class _OfferTile extends StatefulWidget {
 
 class _OfferTileState extends State<_OfferTile> {
   bool _hover = false;
-  bool _expanded = false; // desktop: hover; mobile: tap toggle
+  bool _expanded = false;
 
-  // paleta biało-brązowa
-  static const brown = Color(0xFF6D4C41);
-  static const brownLight = Color(0xFFBCAAA4);
-  static const brownLighter = Color(0xFFD7CCC8);
+  static const brown = OfferSection.brown;
+  static const brownLight = OfferSection.brownLight;
+  static const brownLighter = OfferSection.brownLighter;
 
-  void _openOverlay() => setState(() {
-        _hover = true;
-        _expanded = true;
-      });
-  void _closeOverlay() => setState(() {
-        _hover = false;
-        _expanded = false;
-      });
+  bool get _isMobileWidth {
+    final w = MediaQuery.of(context).size.width;
+    return w < 600;
+  }
+
+  void _openOverlay() {
+    if (_isMobileWidth) return;
+    setState(() {
+      _hover = true;
+      _expanded = true;
+    });
+  }
+
+  void _closeOverlay() {
+    if (_isMobileWidth) return;
+    setState(() {
+      _hover = false;
+      _expanded = false;
+    });
+  }
+
+  Future<void> _openMobileDialog() async {
+    await showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.18),
+      barrierDismissible: true,
+      builder: (ctx) {
+        return Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 10,
+          child: _ExpandedOverlay(title: widget.title, details: widget.details),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final lift = _hover ? -1.0 : 0.0;
 
     return WillPopScope(
-      // Android "wstecz" zamyka najpierw overlay
+      // Handles back navigation to close overlay first
       onWillPop: () async {
-        if (_expanded) {
+        if (_expanded && !_isMobileWidth) {
           _closeOverlay();
           return false;
         }
@@ -157,61 +208,47 @@ class _OfferTileState extends State<_OfferTile> {
           duration: const Duration(milliseconds: 120),
           transform: Matrix4.translationValues(0, lift, 0),
           child: Stack(
-            clipBehavior: Clip.none, // pozwala overlayowi wyjść poza kafelek
+            clipBehavior: Clip.none,
             children: [
-              // Karta bazowa
+              // Base card with tap/hover interaction
               _BaseCard(
                 title: widget.title,
                 details: widget.details,
-                onTap: () {
-                  // mobile: tap przełącza; jeśli chcesz wywołać akcję onAsk – zostaw jak jest
-                  setState(() => _expanded = !_expanded);
+                onTap: () async {
                   widget.onTileTap?.call();
+                  if (_isMobileWidth) {
+                    await _openMobileDialog();
+                  } else {
+                    setState(() => _expanded = !_expanded);
+                  }
                 },
               ),
-
-              // >>> BACKDROP DO ZAMYKANIA (pełnoekranowy, pod chmurką)
-              if (_expanded)
-                Positioned.fill(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: _closeOverlay, // tap gdziekolwiek poza chmurką
-                    // opcjonalnie "przeciągnij w dół, by zamknąć"
-                    onVerticalDragUpdate: (d) {
-                      if (d.primaryDelta != null && d.primaryDelta! > 8) {
-                        _closeOverlay();
-                      }
-                    },
-                    child: const SizedBox.expand(),
-                  ),
-                ),
-
-              // Overlay z pełnym opisem (nad kafelkiem)
-              Positioned(
-                left: -6,
-                right: -6,
-                bottom: 6,
-                child: IgnorePointer(
-                  ignoring: !_expanded,
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 120),
-                    opacity: _expanded ? 1 : 0,
-                    child: AnimatedScale(
+              // Overlay with expanded details (desktop/web)
+              if (_expanded && !_isMobileWidth)
+                Positioned(
+                  left: -6,
+                  right: -6,
+                  bottom: 6,
+                  child: IgnorePointer(
+                    ignoring: !_expanded,
+                    child: AnimatedOpacity(
                       duration: const Duration(milliseconds: 120),
-                      scale: _expanded ? 1 : 0.98,
-                      child: GestureDetector(
-                        // tap po samej chmurce NIE zamyka (zatrzymujemy propagację)
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {},
-                        child: _ExpandedOverlay(
-                          title: widget.title,
-                          details: widget.details,
+                      opacity: _expanded ? 1 : 0,
+                      child: AnimatedScale(
+                        duration: const Duration(milliseconds: 120),
+                        scale: _expanded ? 1 : 0.98,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {},
+                          child: _ExpandedOverlay(
+                            title: widget.title,
+                            details: widget.details,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -220,6 +257,7 @@ class _OfferTileState extends State<_OfferTile> {
   }
 }
 
+/// Card widget for offer tile with accent and summary.
 class _BaseCard extends StatelessWidget {
   const _BaseCard({required this.title, required this.details, this.onTap});
   final String title;
@@ -235,7 +273,7 @@ class _BaseCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Stack(
         children: [
-          // hairline gradient border
+          // Gradient border background
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -245,6 +283,7 @@ class _BaseCard extends StatelessWidget {
               ),
             ),
           ),
+          // Inner white container with accent bar and dot
           Container(
             margin: const EdgeInsets.all(1),
             decoration: BoxDecoration(
@@ -259,12 +298,11 @@ class _BaseCard extends StatelessWidget {
                 splashColor: brown.withOpacity(0.06),
                 highlightColor: _OfferTileState.brownLighter.withOpacity(0.18),
                 child: Padding(
-                  // niska płytka → mały padding pionowy
                   padding:
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   child: Row(
                     children: [
-                      // lewy akcent
+                      // Left accent bar
                       Container(
                         width: 3,
                         height: double.infinity,
@@ -274,7 +312,7 @@ class _BaseCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      // treść (nisko — tylko skrót)
+                      // Title and summary
                       Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -298,7 +336,7 @@ class _BaseCard extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               details,
-                              maxLines: 1, // niski kafelek → 1 linia skrótu
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context)
                                   .textTheme
@@ -313,12 +351,14 @@ class _BaseCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // mała kropka akcentowa
+                      // Accent dot
                       Container(
                         width: 6,
                         height: 6,
                         decoration: const BoxDecoration(
-                            color: brownLight, shape: BoxShape.circle),
+                          color: brownLight,
+                          shape: BoxShape.circle,
+                        ),
                       ),
                     ],
                   ),
@@ -332,6 +372,7 @@ class _BaseCard extends StatelessWidget {
   }
 }
 
+/// Overlay widget for expanded offer details.
 class _ExpandedOverlay extends StatelessWidget {
   const _ExpandedOverlay({required this.title, required this.details});
   final String title;
@@ -348,9 +389,8 @@ class _ExpandedOverlay extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         constraints: const BoxConstraints(
-          // kompaktowa „chmurka”
           minHeight: 4,
-          maxHeight: 150,
+          maxHeight: 180,
         ),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -362,7 +402,7 @@ class _ExpandedOverlay extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // tytuł może być dłuższy (2 linie)
+              // Title (up to 2 lines)
               Text(
                 title,
                 maxLines: 2,
@@ -375,7 +415,7 @@ class _ExpandedOverlay extends StatelessWidget {
                     ),
               ),
               const SizedBox(height: 6),
-              // pełniejszy opis z przewijaniem, jeśli potrzeba
+              // Scrollable details
               Expanded(
                 child: ScrollConfiguration(
                   behavior: const _NoGlow(),
@@ -400,9 +440,16 @@ class _ExpandedOverlay extends StatelessWidget {
   }
 }
 
+/// ScrollBehavior that disables overscroll glow effect.
 class _NoGlow extends ScrollBehavior {
   const _NoGlow();
-  Widget buildViewportChrome(
-          BuildContext context, Widget child, AxisDirection axisDirection) =>
-      child;
+
+  @override
+  Widget buildOverscrollIndicator(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    return child;
+  }
 }

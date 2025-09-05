@@ -19,13 +19,13 @@ class _AboutSectionState extends State<AboutSection>
   late final Animation<Offset> _slideText;
 
   bool _hoveringPhoto = false;
-
-  // NEW: stan rozwinięcia na mobile
   bool _mobileExpanded = false;
 
   @override
   void initState() {
     super.initState();
+
+    // Animations setup
     _c = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
@@ -73,12 +73,11 @@ class _AboutSectionState extends State<AboutSection>
     final size = MediaQuery.sizeOf(context);
     final isMobile = size.width < 760;
 
-    // Na mobile nie rozmazujemy tła (oszczędzamy GPU i unikamy „mleka”)
+    // Blur and color settings depending on device type
     final blurSigma = isMobile ? 0.0 : 16.0;
-
-    // Kolor tekstu na „szkle”
     final onGlass = theme.colorScheme.onSurface.withOpacity(0.92);
 
+    // Container decoration for mobile and desktop
     final containerDecoration = isMobile
         ? BoxDecoration(
             color: Colors.white.withOpacity(0.9),
@@ -112,6 +111,7 @@ class _AboutSectionState extends State<AboutSection>
             ),
           );
 
+    // Main layout
     return Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(isMobile ? 20 : 32),
@@ -129,10 +129,10 @@ class _AboutSectionState extends State<AboutSection>
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeOutCubic,
                   child: mobile
+                      // Mobile layout: column with photo, divider, text, and expand button
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Foto – mniejsze w stanie zwiniętym
                             ConstrainedBox(
                               constraints: BoxConstraints(
                                 maxWidth: _mobileExpanded ? 420 : 180,
@@ -148,8 +148,6 @@ class _AboutSectionState extends State<AboutSection>
                             const SizedBox(height: 14),
                             _MobileDivider(),
                             const SizedBox(height: 14),
-
-                            // Tekst – 3 linie w stanie zwiniętym
                             _AnimatedTextBlock(
                               text: t.aboutPlaceholder,
                               fade: _fadeText,
@@ -160,10 +158,7 @@ class _AboutSectionState extends State<AboutSection>
                               compact: true,
                               maxLines: _mobileExpanded ? null : 3,
                             ),
-
                             const SizedBox(height: 10),
-
-                            // Przycisk Pokaż więcej/mniej
                             AnimatedSwitcher(
                               duration: const Duration(milliseconds: 200),
                               child: TextButton.icon(
@@ -173,9 +168,8 @@ class _AboutSectionState extends State<AboutSection>
                                 icon: Icon(_mobileExpanded
                                     ? Icons.expand_less
                                     : Icons.expand_more),
-                                label: Text(_mobileExpanded
-                                    ? 'Pokaż mniej'
-                                    : 'Pokaż więcej'),
+                                label: Text(
+                                    _mobileExpanded ? t.showLess : t.showMore),
                                 style: TextButton.styleFrom(
                                   foregroundColor: theme.colorScheme.primary,
                                 ),
@@ -183,6 +177,7 @@ class _AboutSectionState extends State<AboutSection>
                             ),
                           ],
                         )
+                      // Desktop/tablet layout: row with photo and text
                       : Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -219,6 +214,7 @@ class _AboutSectionState extends State<AboutSection>
   }
 }
 
+// Divider widget for mobile layout
 class _MobileDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -233,6 +229,7 @@ class _MobileDivider extends StatelessWidget {
   }
 }
 
+// Animated photo widget with hover effect for web
 class _AnimatedPhoto extends StatelessWidget {
   const _AnimatedPhoto({
     required this.fade,
@@ -253,7 +250,7 @@ class _AnimatedPhoto extends StatelessWidget {
     final photo = ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: AspectRatio(
-        aspectRatio: 4 / 5, // trochę „grubiej” na mobile
+        aspectRatio: 4 / 5,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -262,7 +259,6 @@ class _AnimatedPhoto extends StatelessWidget {
               fit: BoxFit.cover,
               filterQuality: FilterQuality.high,
             ),
-            // delikatny brązowy gradient
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -312,6 +308,7 @@ class _AnimatedPhoto extends StatelessWidget {
   }
 }
 
+// Animated text block with responsive styling and optional maxLines
 class _AnimatedTextBlock extends StatelessWidget {
   const _AnimatedTextBlock({
     required this.text,
@@ -319,7 +316,7 @@ class _AnimatedTextBlock extends StatelessWidget {
     required this.slide,
     this.textColor,
     this.compact = false,
-    this.maxLines, // NEW
+    this.maxLines,
   });
 
   final String text;
@@ -327,7 +324,7 @@ class _AnimatedTextBlock extends StatelessWidget {
   final Animation<Offset> slide;
   final Color? textColor;
   final bool compact;
-  final int? maxLines; // NEW
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -336,6 +333,7 @@ class _AnimatedTextBlock extends StatelessWidget {
     final isPhone = w < 420;
     final isTablet = w >= 420 && w < 760;
 
+    // Responsive font size
     double baseSize = isPhone
         ? 16.0
         : isTablet
@@ -349,6 +347,7 @@ class _AnimatedTextBlock extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final Color fg = (textColor ?? scheme.onSurface.withOpacity(0.96));
 
+    // Decorations for different device types
     final BoxDecoration decoPhone = BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(14),
@@ -376,10 +375,10 @@ class _AnimatedTextBlock extends StatelessWidget {
       ],
     );
 
+    // Text content with constraints and styling
     final content = Center(
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          // węższy blok na phone, wygodny do czytania
           maxWidth: isPhone ? 560 : 720,
         ),
         child: Container(
@@ -391,7 +390,6 @@ class _AnimatedTextBlock extends StatelessWidget {
           child: Text(
             text,
             softWrap: true,
-            // justowanie wyłączone na phone — lepsza czytelność
             textAlign: isPhone ? TextAlign.start : TextAlign.justify,
             textHeightBehavior: const TextHeightBehavior(
               applyHeightToFirstAscent: false,

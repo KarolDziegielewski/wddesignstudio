@@ -9,28 +9,35 @@ import 'ui/sections/faq_section.dart';
 import 'widgets/lang_switcher.dart';
 import 'widgets/section_shell.dart';
 
+/// Main landing page widget with scrollable sections and navigation.
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
+
   @override
   State<LandingPage> createState() => _LandingPageState();
 }
 
 class _LandingPageState extends State<LandingPage> {
+  // Keys for each section to enable scroll-to functionality.
   final _aboutKey = GlobalKey();
   final _projectsKey = GlobalKey();
   final _offerKey = GlobalKey();
   final _contactKey = GlobalKey();
   final _faqKey = GlobalKey();
 
+  // Scroll controller for tracking scroll position.
   final _scrollCtrl = ScrollController();
 
   double _offset = 0;
+
+  // Responsive breakpoints.
   bool get _isMobile => MediaQuery.of(context).size.width < 900;
   bool get _isPhone => MediaQuery.of(context).size.width < 600;
 
   @override
   void initState() {
     super.initState();
+    // Listen to scroll changes to update AppBar appearance.
     _scrollCtrl.addListener(() {
       setState(() => _offset = _scrollCtrl.offset);
     });
@@ -42,6 +49,7 @@ class _LandingPageState extends State<LandingPage> {
     super.dispose();
   }
 
+  // Scrolls to the widget associated with the given key.
   void _scrollTo(GlobalKey key) {
     final ctx = key.currentContext;
     if (ctx == null) return;
@@ -53,6 +61,7 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  // Shows language selection modal bottom sheet.
   void _showLangSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -74,6 +83,7 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  // Shows privacy policy modal bottom sheet.
   void _showPrivacySheet(BuildContext context) {
     final t = S.of(context);
     showModalBottomSheet(
@@ -113,6 +123,7 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  // Shows cookies information modal bottom sheet.
   void _showCookiesSheet(BuildContext context) {
     final t = S.of(context);
     showModalBottomSheet(
@@ -156,7 +167,7 @@ class _LandingPageState extends State<LandingPage> {
   Widget build(BuildContext context) {
     final t = S.of(context);
 
-    // AppBar: opacity/blur/elevation zależnie od scrollu + lżejszy blur na mobile
+    // Calculate AppBar appearance based on scroll offset and device type.
     final appBarOpacity = (_offset / 180).clamp(0, 1).toDouble();
     final baseBlur = 12.0 * appBarOpacity;
     final blurSigma = _isMobile ? baseBlur * 0.6 : baseBlur;
@@ -188,16 +199,19 @@ class _LandingPageState extends State<LandingPage> {
               ),
               if (!_isMobile) ...[
                 const SizedBox(width: 24),
-                // Nawigacja tylko desktop/tablet szeroki
-                Row(children: [
-                  _NavBtn(label: t.about, onTap: () => _scrollTo(_aboutKey)),
-                  _NavBtn(
-                      label: t.projects, onTap: () => _scrollTo(_projectsKey)),
-                  _NavBtn(label: t.offer, onTap: () => _scrollTo(_offerKey)),
-                  _NavBtn(
-                      label: t.contact, onTap: () => _scrollTo(_contactKey)),
-                  _NavBtn(label: t.faq, onTap: () => _scrollTo(_faqKey)),
-                ]),
+                // Desktop/tablet navigation buttons.
+                Row(
+                  children: [
+                    _NavBtn(label: t.about, onTap: () => _scrollTo(_aboutKey)),
+                    _NavBtn(
+                        label: t.projects,
+                        onTap: () => _scrollTo(_projectsKey)),
+                    _NavBtn(label: t.offer, onTap: () => _scrollTo(_offerKey)),
+                    _NavBtn(
+                        label: t.contact, onTap: () => _scrollTo(_contactKey)),
+                    _NavBtn(label: t.faq, onTap: () => _scrollTo(_faqKey)),
+                  ],
+                ),
                 const SizedBox(width: 8),
                 const LangSwitcher(),
                 const SizedBox(width: 16),
@@ -208,7 +222,7 @@ class _LandingPageState extends State<LandingPage> {
         actions: _isMobile
             ? [
                 IconButton(
-                  tooltip: t.language, // jeśli masz w l10n, inaczej "Language"
+                  tooltip: t.language,
                   icon: const Icon(Icons.language),
                   onPressed: () => _showLangSheet(context),
                 ),
@@ -240,58 +254,70 @@ class _LandingPageState extends State<LandingPage> {
         ),
       ),
       drawer: _isMobile
-          ? _MobileDrawer(onSelect: _scrollTo, keys: {
-              'about': _aboutKey,
-              'projects': _projectsKey,
-              'offer': _offerKey,
-              'contact': _contactKey,
-              'faq': _faqKey,
-            })
+          ? _MobileDrawer(
+              onSelect: _scrollTo,
+              keys: {
+                'about': _aboutKey,
+                'projects': _projectsKey,
+                'offer': _offerKey,
+                'contact': _contactKey,
+                'faq': _faqKey,
+              },
+            )
           : null,
       body: Stack(
         children: [
+          // Background decoration.
           const FuturisticBackground(),
+          // Main scrollable content.
           SingleChildScrollView(
             controller: _scrollCtrl,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Odstęp, bo AppBar jest "behind"
+                // Spacer for AppBar overlay.
                 SizedBox(
-                    height: MediaQuery.of(context).padding.top +
-                        (_isMobile ? 64 : 72)),
+                  height: MediaQuery.of(context).padding.top +
+                      (_isMobile ? 64 : 72),
+                ),
+                // Hero section with parallax and CTA.
                 _HeroSection(
                   onProjects: () => _scrollTo(_projectsKey),
                   scrollOffset: _offset,
                   isMobile: _isMobile,
                   isPhone: _isPhone,
                 ),
+                // About section.
                 SectionShell(
                   key: _aboutKey,
                   title: t.about,
-                  // AboutSection już jest responsywna (Twoja najnowsza wersja)
                   child: const AboutSection(),
                 ),
+                // Projects section.
                 SectionShell(
                   key: _projectsKey,
                   title: t.projects,
                   child: const ProjectsSection(),
                 ),
+                // Offer section.
                 SectionShell(
                   key: _offerKey,
                   title: t.offer,
                   child: const OfferSection(),
                 ),
+                // Contact section.
                 SectionShell(
                   key: _contactKey,
                   title: t.contact,
                   child: const ContactSection(),
                 ),
+                // FAQ section.
                 SectionShell(
                   key: _faqKey,
                   title: t.faq,
                   child: const FaqSection(),
                 ),
+                // Footer with legal links.
                 _Footer(
                   onPrivacyTap: () => _showPrivacySheet(context),
                   onCookiesTap: () => _showCookiesSheet(context),
@@ -305,6 +331,7 @@ class _LandingPageState extends State<LandingPage> {
   }
 }
 
+/// Navigation button for AppBar with hover effect.
 class _NavBtn extends StatefulWidget {
   const _NavBtn({required this.label, required this.onTap});
   final String label;
@@ -316,6 +343,7 @@ class _NavBtn extends StatefulWidget {
 
 class _NavBtnState extends State<_NavBtn> {
   bool _hover = false;
+
   @override
   Widget build(BuildContext context) {
     final text = Text(
@@ -332,8 +360,7 @@ class _NavBtnState extends State<_NavBtn> {
           onTap: widget.onTap,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(
-                horizontal: 12, vertical: 10), // większy hit target
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
               color:
                   _hover ? Colors.black.withOpacity(.04) : Colors.transparent,
@@ -364,10 +391,12 @@ class _NavBtnState extends State<_NavBtn> {
   }
 }
 
+/// Drawer for mobile navigation with section links and language switcher.
 class _MobileDrawer extends StatelessWidget {
   const _MobileDrawer({required this.onSelect, required this.keys});
   final void Function(GlobalKey) onSelect;
   final Map<String, GlobalKey> keys;
+
   @override
   Widget build(BuildContext context) {
     final t = S.of(context);
@@ -377,7 +406,6 @@ class _MobileDrawer extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: [
             ListTile(
-              // minimalistyczny nagłówek
               title: const Text('WD Design Studio'),
               subtitle: Text(t.heroPill),
               visualDensity: VisualDensity.compact,
@@ -430,6 +458,7 @@ class _MobileDrawer extends StatelessWidget {
   }
 }
 
+/// Hero section with background, parallax, title, subtitle, and CTA buttons.
 class _HeroSection extends StatelessWidget {
   const _HeroSection({
     required this.onProjects,
@@ -437,6 +466,7 @@ class _HeroSection extends StatelessWidget {
     required this.isMobile,
     required this.isPhone,
   });
+
   final VoidCallback onProjects;
   final double scrollOffset;
   final bool isMobile;
@@ -447,15 +477,15 @@ class _HeroSection extends StatelessWidget {
     final t = S.of(context);
     final size = MediaQuery.of(context).size;
 
-    // lżejszy parallax na mobile
+    // Parallax effect for background image.
     final parallaxFactor = isMobile ? 0.05 : 0.08;
     final parallax = (scrollOffset * parallaxFactor).clamp(0, size.height);
 
-    // wysokość hero: na telefonach ~86% wysokości, min 560
+    // Responsive hero section height.
     final double heroHeight =
         isMobile ? (size.height * 0.86).clamp(560.0, 900.0) : size.height;
 
-    // odstępy i rozmiary tekstu/CTA
+    // Responsive paddings and font sizes.
     final edgeH = isMobile ? (isPhone ? 18.0 : 22.0) : 64.0;
     final subtitleSize = isMobile ? 18.0 : 20.0;
     final ctaHPadPrimary = isMobile ? 26.0 : 34.0;
@@ -469,18 +499,17 @@ class _HeroSection extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // TŁO
+          // Background image with parallax.
           Transform.translate(
             offset: Offset(0, -parallax.toDouble()),
             child: Image.asset(
               'assets/images/hero.jpg',
               fit: BoxFit.cover,
               alignment: Alignment.center,
-              filterQuality: FilterQuality.medium, // lżej na mobile
+              filterQuality: FilterQuality.medium,
             ),
           ),
-
-          // OVERLAY: diagonalny gradient + subtelny radial (bez zmian)
+          // Diagonal and radial gradient overlays.
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -508,8 +537,7 @@ class _HeroSection extends StatelessWidget {
               ),
             ),
           ),
-
-          // GLOW BLOBS — lżejsza nieprzezroczystość na mobile
+          // Decorative glowing circles.
           Positioned(
             top: -80,
             left: -60,
@@ -532,8 +560,7 @@ class _HeroSection extends StatelessWidget {
                   .withOpacity(isMobile ? .14 : .18),
             ),
           ),
-
-          // TREŚĆ
+          // Main hero content: pill, title, subtitle, CTA, scroll hint.
           Center(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: edgeH),
@@ -542,11 +569,12 @@ class _HeroSection extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // PILL
+                    // Hero pill.
                     Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: isMobile ? 14 : 18,
-                          vertical: isMobile ? 6 : 8),
+                        horizontal: isMobile ? 14 : 18,
+                        vertical: isMobile ? 6 : 8,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(999),
                         color: Colors.white.withOpacity(.14),
@@ -564,8 +592,7 @@ class _HeroSection extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: isMobile ? 20 : 26),
-
-                    // TYTUŁ
+                    // Animated hero title.
                     TweenAnimationBuilder<double>(
                       tween: Tween(begin: .92, end: 1),
                       duration: const Duration(milliseconds: 700),
@@ -593,8 +620,7 @@ class _HeroSection extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-
-                    // PODTYTUŁ
+                    // Hero subtitle.
                     Text(
                       t.heroSubtitle,
                       textAlign: TextAlign.center,
@@ -606,8 +632,7 @@ class _HeroSection extends StatelessWidget {
                           ),
                     ),
                     SizedBox(height: isMobile ? 30 : 44),
-
-                    // CTA
+                    // Call-to-action buttons.
                     Wrap(
                       spacing: 12,
                       runSpacing: 10,
@@ -649,7 +674,9 @@ class _HeroSection extends StatelessWidget {
                           label: Text(t.ctaContact),
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(
-                                color: Colors.white70, width: 2),
+                              color: Colors.white70,
+                              width: 2,
+                            ),
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(
                               horizontal: ctaHPadSecondary,
@@ -663,10 +690,8 @@ class _HeroSection extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     SizedBox(height: isMobile ? 28 : 40),
-
-                    // Scroll hint
+                    // Animated scroll down hint.
                     const _ScrollHint(),
                   ],
                 ),
@@ -679,8 +704,10 @@ class _HeroSection extends StatelessWidget {
   }
 }
 
+/// Decorative background with gradients and glowing circles.
 class FuturisticBackground extends StatelessWidget {
   const FuturisticBackground({super.key});
+
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 900;
@@ -691,38 +718,44 @@ class FuturisticBackground extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFFFAF6F1), // beż
-              Color(0xFFFDFBF8), // prawie biały
+              Color(0xFFFAF6F1),
+              Color(0xFFFDFBF8),
             ],
           ),
         ),
-        child: Stack(children: [
-          Positioned(
-            top: isMobile ? -140 : -120,
-            left: isMobile ? -100 : -80,
-            child: _GlowCircle(
-              size: isMobile ? 220 : 260,
-              color: const Color(0xFFD7BFA7).withOpacity(isMobile ? .20 : .25),
+        child: Stack(
+          children: [
+            Positioned(
+              top: isMobile ? -140 : -120,
+              left: isMobile ? -100 : -80,
+              child: _GlowCircle(
+                size: isMobile ? 220 : 260,
+                color:
+                    const Color(0xFFD7BFA7).withOpacity(isMobile ? .20 : .25),
+              ),
             ),
-          ),
-          Positioned(
-            bottom: isMobile ? -180 : -160,
-            right: isMobile ? -140 : -120,
-            child: _GlowCircle(
-              size: isMobile ? 320 : 360,
-              color: const Color(0xFF8B5E3C).withOpacity(isMobile ? .14 : .18),
+            Positioned(
+              bottom: isMobile ? -180 : -160,
+              right: isMobile ? -140 : -120,
+              child: _GlowCircle(
+                size: isMobile ? 320 : 360,
+                color:
+                    const Color(0xFF8B5E3C).withOpacity(isMobile ? .14 : .18),
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
   }
 }
 
+/// Glowing circle used for background decoration.
 class _GlowCircle extends StatelessWidget {
   const _GlowCircle({required this.size, required this.color});
   final double size;
   final Color color;
+
   @override
   Widget build(BuildContext context) {
     return IgnorePointer(
@@ -740,8 +773,10 @@ class _GlowCircle extends StatelessWidget {
   }
 }
 
+/// Animated scroll down hint for hero section.
 class _ScrollHint extends StatefulWidget {
   const _ScrollHint();
+
   @override
   State<_ScrollHint> createState() => _ScrollHintState();
 }
@@ -751,6 +786,7 @@ class _ScrollHintState extends State<_ScrollHint>
   late final AnimationController _c =
       AnimationController(vsync: this, duration: const Duration(seconds: 2))
         ..repeat(reverse: true);
+
   @override
   void dispose() {
     _c.dispose();
@@ -777,6 +813,7 @@ class _ScrollHintState extends State<_ScrollHint>
   }
 }
 
+/// Footer with copyright and legal links.
 class _Footer extends StatelessWidget {
   const _Footer({
     required this.onPrivacyTap,
@@ -793,8 +830,12 @@ class _Footer extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 900;
 
     return Padding(
-      padding:
-          EdgeInsets.fromLTRB(24, isMobile ? 40 : 56, 24, isMobile ? 40 : 56),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        isMobile ? 40 : 56,
+        24,
+        isMobile ? 40 : 56,
+      ),
       child: Column(
         children: [
           const Divider(height: 32),
@@ -805,12 +846,14 @@ class _Footer extends StatelessWidget {
             runSpacing: 8,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Text('© $year WD Design Studio',
-                  style: Theme.of(context).textTheme.bodyMedium),
+              Text(
+                '© $year WD Design Studio',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
               const Text('•'),
               TextButton(
                 onPressed: onPrivacyTap,
-                child: Text(t.privacy), // np. „Polityka prywatności”
+                child: Text(t.privacy),
               ),
               const Text('•'),
               TextButton(

@@ -1,26 +1,25 @@
-// ================================
-// lib/sections/projects/section.dart
-// ================================
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:wddesignstudio/l10n/app_localizations.dart';
 
+/// Model pojedynczego projektu
 class Project {
   final String title;
-  final String short; // krótki opis – na karcie
-  final String longDescription; // dłuższy opis – w detalu
-  final String coverImage; // JEDNO zdjęcie na kartę (asset lub URL)
-  final List<String> gallery; // 0..N zdjęć po kliknięciu
+  final String? short; // Krótki opis na karcie
+  final String? longDescription; // Dłuższy opis w detalu
+  final String coverImage; // Obrazek główny (asset lub URL)
+  final List<String> gallery; // Galeria zdjęć
 
   const Project({
     required this.title,
-    required this.short,
-    required this.longDescription,
+    this.short,
+    this.longDescription,
     required this.coverImage,
     this.gallery = const [],
   });
 }
 
+/// Sekcja prezentująca projekty w formie siatki
 class ProjectsSection extends StatelessWidget {
   const ProjectsSection({super.key});
 
@@ -29,7 +28,7 @@ class ProjectsSection extends StatelessWidget {
     final w = MediaQuery.of(context).size.width;
     final cross = w < 600 ? 1 : (w < 1000 ? 2 : 3);
 
-    // Budujemy listę projektów NA PODSTAWIE lokalizacji
+    // Pobranie tłumaczeń i zbudowanie listy projektów
     final t = S.of(context);
     final projects = <Project>[
       Project(
@@ -38,6 +37,7 @@ class ProjectsSection extends StatelessWidget {
         longDescription: t.prj1Long,
         coverImage: 'assets/images/mini_proj1.jpg',
         gallery: const [
+          'assets/images/mini_proj1.jpg',
           'assets/images/proj1_1.jpg',
           'assets/images/proj1_2.jpg',
           'assets/images/proj1_3.jpg',
@@ -52,6 +52,7 @@ class ProjectsSection extends StatelessWidget {
         longDescription: t.prj2Long,
         coverImage: 'assets/images/mini_proj2.jpg',
         gallery: const [
+          'assets/images/mini_proj2.jpg',
           'assets/images/proj2_1.jpg',
           'assets/images/proj2_2.jpg',
           'assets/images/proj2_3.jpg',
@@ -63,6 +64,7 @@ class ProjectsSection extends StatelessWidget {
         longDescription: t.prj3Long,
         coverImage: 'assets/images/mini_proj3.jpg',
         gallery: const [
+          'assets/images/mini_proj3.jpg',
           'assets/images/proj3_1.jpg',
           'assets/images/proj3_2.jpg',
           'assets/images/proj3_3.jpg',
@@ -74,6 +76,7 @@ class ProjectsSection extends StatelessWidget {
         longDescription: t.prj4Long,
         coverImage: 'assets/images/mini_proj4.jpg',
         gallery: const [
+          'assets/images/mini_proj4.jpg',
           'assets/images/proj4_1.jpg',
           'assets/images/proj4_2.jpg',
           'assets/images/proj4_3.jpg',
@@ -83,8 +86,78 @@ class ProjectsSection extends StatelessWidget {
           'assets/images/proj4_7.jpg',
         ],
       ),
+      Project(
+        title: t.prj5Title,
+        coverImage: 'assets/images/mini_proj5.jpg',
+        gallery: const [
+          'assets/images/mini_proj5.jpg',
+          'assets/images/proj5_1.jpg',
+        ],
+      ),
+      Project(
+        title: t.prj6Title,
+        coverImage: 'assets/images/mini_proj6.jpg',
+        gallery: const [
+          'assets/images/mini_proj6.jpg',
+          'assets/images/proj6_1.jpg',
+        ],
+      ),
+      Project(
+        title: t.prj7Title,
+        coverImage: 'assets/images/mini_proj7.jpg',
+        gallery: const [
+          'assets/images/mini_proj7.jpg',
+          'assets/images/proj7_1.jpg',
+          'assets/images/proj7_2.jpg',
+        ],
+      ),
+      Project(
+        title: t.prj8Title,
+        coverImage: 'assets/images/mini_proj8.jpg',
+        gallery: const [
+          'assets/images/mini_proj8.jpg',
+          'assets/images/proj8_1.jpg',
+        ],
+      ),
+      Project(
+        title: t.prj9Title,
+        coverImage: 'assets/images/mini_proj9.jpg',
+        gallery: const [
+          'assets/images/mini_proj9.jpg',
+          'assets/images/proj9_1.jpg',
+          'assets/images/proj9_2.jpg',
+        ],
+      ),
+      Project(
+        title: t.prj10Title,
+        coverImage: 'assets/images/mini_proj10.jpg',
+        gallery: const [
+          'assets/images/mini_proj10.jpg',
+          'assets/images/proj10_1.jpg',
+        ],
+      ),
+      Project(
+        title: t.prj11Title,
+        coverImage: 'assets/images/mini_proj11.jpg',
+        gallery: const [
+          'assets/images/mini_proj11.jpg',
+          'assets/images/proj11_1.jpg',
+          'assets/images/proj11_2.jpg',
+        ],
+      ),
+      Project(
+        title: t.prj12Title,
+        coverImage: 'assets/images/mini_proj12.jpg',
+        gallery: const [
+          'assets/images/mini_proj12.jpg',
+          'assets/images/proj12_1.jpg',
+          'assets/images/proj12_2.jpg',
+          'assets/images/proj12_3.jpg',
+        ],
+      ),
     ];
 
+    // Wyświetlenie siatki projektów
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -107,6 +180,7 @@ class ProjectsSection extends StatelessWidget {
     );
   }
 
+  /// Otwiera szczegóły projektu w dolnym arkuszu
   void _openProject(BuildContext context, Project p) => showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -116,11 +190,17 @@ class ProjectsSection extends StatelessWidget {
       );
 }
 
+/// Karta pojedynczego projektu w siatce
 class _ProjectCard extends StatelessWidget {
-  const _ProjectCard({required this.project, required this.onTap});
+  const _ProjectCard({
+    required this.project,
+    required this.onTap,
+  });
+
   final Project project;
   final VoidCallback onTap;
 
+  /// Zwraca odpowiedni provider obrazu (asset lub sieć)
   ImageProvider _coverProvider(String path) {
     return path.startsWith('http')
         ? NetworkImage(path)
@@ -138,8 +218,10 @@ class _ProjectCard extends StatelessWidget {
           image: DecorationImage(
             image: _coverProvider(project.coverImage),
             fit: BoxFit.cover,
-            colorFilter:
-                const ColorFilter.mode(Colors.black26, BlendMode.darken),
+            colorFilter: const ColorFilter.mode(
+              Colors.black26,
+              BlendMode.darken,
+            ),
           ),
           boxShadow: const [
             BoxShadow(
@@ -151,6 +233,7 @@ class _ProjectCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
+            // Gradient na dole karty
             Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -165,6 +248,7 @@ class _ProjectCard extends StatelessWidget {
                 ),
               ),
             ),
+            // Tytuł i opcjonalny opis
             Positioned(
               left: 16,
               right: 16,
@@ -182,16 +266,19 @@ class _ProjectCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    project.short,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
+                  if (project.short != null &&
+                      project.short!.trim().isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      project.short!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
+                  ]
                 ],
               ),
             ),
@@ -202,8 +289,10 @@ class _ProjectCard extends StatelessWidget {
   }
 }
 
+/// Szczegóły projektu wyświetlane w dolnym arkuszu
 class _ProjectDetails extends StatefulWidget {
   const _ProjectDetails({required this.project});
+
   final Project project;
 
   @override
@@ -214,6 +303,7 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
   final PageController _page = PageController();
   int _i = 0;
 
+  /// Provider obrazu (asset lub sieć)
   ImageProvider _imgProvider(String path) {
     return path.startsWith('http')
         ? NetworkImage(path)
@@ -226,6 +316,7 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
     super.dispose();
   }
 
+  /// Otwiera galerię w trybie pełnoekranowym
   void _openFullscreen(int index, List<String> images) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -249,22 +340,26 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Expanded(
-                child: Text(
-                  p.title,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall
-                      ?.copyWith(fontWeight: FontWeight.w700),
+            // Nagłówek z tytułem i przyciskiem zamknięcia
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    p.title,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
                 ),
-              ),
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close),
-              ),
-            ]),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
+            // Galeria zdjęć projektu
             if (gallery.isNotEmpty) ...[
               AspectRatio(
                 aspectRatio: 16 / 9,
@@ -289,6 +384,7 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                                 ),
                               ),
                             ),
+                            // Przycisk pełnego ekranu
                             Positioned(
                               top: 8,
                               right: 8,
@@ -300,8 +396,10 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                                   onTap: () => _openFullscreen(i, gallery),
                                   child: const Padding(
                                     padding: EdgeInsets.all(8),
-                                    child: Icon(Icons.open_in_full,
-                                        color: Colors.white),
+                                    child: Icon(
+                                      Icons.open_in_full,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -309,6 +407,7 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                           ],
                         ),
                       ),
+                      // Nawigacja po zdjęciach
                       Positioned.fill(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -344,6 +443,7 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                 ),
               ),
               const SizedBox(height: 8),
+              // Kropki pod galerią
               if (gallery.length > 1)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -363,6 +463,7 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
                   ),
                 ),
               const SizedBox(height: 12),
+              // Miniaturki zdjęć
               if (gallery.length > 1)
                 SizedBox(
                   height: 72,
@@ -417,10 +518,13 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
               const SizedBox(height: 16),
             ],
             const SizedBox(height: 6),
-            Text(
-              p.longDescription,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            // Opis projektu
+            if (p.longDescription != null &&
+                p.longDescription!.trim().isNotEmpty)
+              Text(
+                p.longDescription!,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
           ],
         ),
       ),
@@ -428,8 +532,13 @@ class _ProjectDetailsState extends State<_ProjectDetails> {
   }
 }
 
+/// Przycisk nawigacyjny do zmiany zdjęcia w galerii
 class _NavBtn extends StatelessWidget {
-  const _NavBtn({required this.icon, required this.onTap});
+  const _NavBtn({
+    required this.icon,
+    required this.onTap,
+  });
+
   final IconData icon;
   final VoidCallback onTap;
 
@@ -441,17 +550,22 @@ class _NavBtn extends StatelessWidget {
       child: InkWell(
         customBorder: const CircleBorder(),
         onTap: onTap,
-        child: const Padding(
-          padding: EdgeInsets.all(6),
-          child: Icon(Icons.chevron_right, color: Colors.white),
+        child: Padding(
+          padding: const EdgeInsets.all(6),
+          child: Icon(icon, color: Colors.white),
         ),
       ),
     );
   }
 }
 
+/// Pełnoekranowa galeria zdjęć projektu
 class _GalleryFullscreen extends StatefulWidget {
-  const _GalleryFullscreen({required this.images, this.initialIndex = 0});
+  const _GalleryFullscreen({
+    required this.images,
+    this.initialIndex = 0,
+  });
+
   final List<String> images;
   final int initialIndex;
 
@@ -476,6 +590,7 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
     super.dispose();
   }
 
+  /// Provider obrazu (asset lub sieć)
   ImageProvider _provider(String path) {
     return path.startsWith('http')
         ? NetworkImage(path)
@@ -488,6 +603,7 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          // Przeglądarka zdjęć z możliwością powiększania
           PageView.builder(
             controller: _ctrl,
             itemCount: widget.images.length,
@@ -525,6 +641,7 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
               );
             },
           ),
+          // Pasek górny z przyciskiem zamknięcia i numeracją
           SafeArea(
             child: Row(
               children: [
@@ -540,8 +657,10 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
                 const Spacer(),
                 Container(
                   margin: const EdgeInsets.only(right: 12),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black54,
                     borderRadius: BorderRadius.circular(999),
@@ -554,7 +673,8 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
               ],
             ),
           ),
-          if (widget.images.length > 1) ...[
+          // Nawigacja po zdjęciach w trybie pełnoekranowym
+          if (widget.images.length > 1)
             Positioned.fill(
               child: IgnorePointer(
                 ignoring: false,
@@ -588,15 +708,19 @@ class _GalleryFullscreenState extends State<_GalleryFullscreen> {
                 ),
               ),
             ),
-          ],
         ],
       ),
     );
   }
 }
 
+/// Przycisk nawigacyjny w pełnoekranowej galerii
 class _FsNavBtn extends StatelessWidget {
-  const _FsNavBtn({required this.icon, required this.onTap});
+  const _FsNavBtn({
+    required this.icon,
+    required this.onTap,
+  });
+
   final IconData icon;
   final VoidCallback onTap;
 
