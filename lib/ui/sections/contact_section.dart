@@ -48,8 +48,7 @@ class _ContactSectionState extends State<ContactSection> {
     final email = _emailCtrl.text.trim();
     final msg = _msgCtrl.text.trim();
 
-    const subject =
-        'Kocham siostrzyczke (wiadomość z formularza ze stronki skibidi)';
+    const subject = 'wiadomość z formularza kontaktowego WD Design Studio';
     final signature = '\n\n— $name ($email)';
     final uri = _mailtoUri(
       to: 'studio@dziegielewska.info',
@@ -209,7 +208,7 @@ class _ContactSectionState extends State<ContactSection> {
               title: 'E-mail',
               leading: const Icon(Icons.mail_outline, size: 22),
               content: SelectableText(
-                'karol@dziegielewski.info',
+                'studio@dziegielewska.info',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
