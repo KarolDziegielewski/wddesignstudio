@@ -150,17 +150,17 @@ class S {
       );
   String get aboutPlaceholder => _t(
         '''Nazywam się Weronika Dzięgielewska. 
-Jestem architektką wnętrz z wykształceniem zdobytym na University of the Arts w Londynie. Podczas półtorarocznej pracy w londyńskim studiu architektonicznym, specjalizującym się w projektach high-end dla klientów prywatnych, współtworzyłam w niewielkim zespole dwa złożone projekty modernizacji i rozbudowy domów jednorodzinnych w prestiżowej dzielnicy objętej ochroną konserwatorską. Po powrocie do Polski przez ostatni rok pracowałam w Warszawie przy różnorodnych projektach wnętrz dla dużej firmy, gdzie kluczowe były tempo pracy, kontakt z klientem i sprzedaż.
+Jestem architektką wnętrz z wykształceniem zdobytym na University of the Arts w Londynie. Podczas pracy w londyńskim studiu architektonicznym, specjalizującym się w projektach high-end dla klientów prywatnych, współtworzyłam w niewielkim zespole dwa złożone projekty modernizacji i rozbudowy domów jednorodzinnych w prestiżowej dzielnicy objętej ochroną konserwatorską. Po powrocie do Polski przez ostatni rok pracowałam w Warszawie przy różnorodnych projektach wnętrz dla dużej firmy, gdzie kluczowe były tempo pracy, kontakt z klientem i sprzedaż.
 
 Studia oraz doświadczenie zawodowe w dwóch różnych środowiskach nauczyły mnie postrzegać projektowanie zarówno jako formę sztuki i wyraz tożsamości, jak i jako proces praktyczny, skupiony na funkcjonalności i realnych potrzebach użytkownika.
 ''',
         '''My name is Weronika Dziegielewska
-I am an interior architect with a degree from the University of the Arts London. During my time in London, I spent a year and a half working at an architectural studio focused on high-end residential projects. As part of a close-knit team, I contributed to two complex refurbishments and extensions of single-family homes located in a conservation area in central London.
+I am an interior architect with a degree from the University of the Arts London. During my time in London, I worked at an architectural studio focused on high-end residential projects. As part of a close-knit team, I contributed to two complex refurbishments and extensions of single-family homes located in a conservation area in central London.
 Over the past year, I have been working in Warsaw on a wide range of interior design projects for a large company, where I developed skills in fast-paced project delivery, client communication, and sales.
 My academic background and professional experience have given me a multifaceted perspective on design - as a form of art, creativity, and identity, but also as a practical and user-focused discipline.
 ''',
         '''Mi chiamo Weronika Dzięgielewska.
-Sono un’architetta d’interni laureata alla University of the Arts di Londra. Durante un anno e mezzo di esperienza in uno studio londinese specializzato in progetti residenziali di alto livello, ho collaborato, all’interno di un piccolo team, alla realizzazione di due complessi interventi di ristrutturazione e ampliamento di case unifamiliari situate in una zona tutelata del centro città.
+Durante il mio lavoro a Londra in uno studio specializzato in progetti residenziali di alto livello, ho collaborato, all’interno di un piccolo team, alla realizzazione di due complessi interventi di ristrutturazione e ampliamento di case unifamiliari situate in una zona tutelata del centro città.
 
 Nell’ultimo anno ho lavorato a Varsavia per una grande azienda, partecipando a numerosi progetti diversi. Questo contesto mi ha permesso di sviluppare competenze nella gestione di ritmi intensi, nella comunicazione con il cliente e nel supporto alla vendita.
 
