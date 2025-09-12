@@ -43,7 +43,6 @@ class ProjectsSection extends StatelessWidget {
           'assets/images/proj1_3.jpg',
           'assets/images/proj1_4.jpg',
           'assets/images/proj1_5.jpg',
-          'assets/images/proj1_6.jpg',
         ],
       ),
       Project(
@@ -84,6 +83,15 @@ class ProjectsSection extends StatelessWidget {
           'assets/images/proj4_5.jpg',
           'assets/images/proj4_6.jpg',
           'assets/images/proj4_7.jpg',
+        ],
+      ),
+      Project(
+        title: t.prj13Title,
+        coverImage: 'assets/images/mini_proj13.jpg',
+        gallery: const [
+          'assets/images/mini_proj13.jpg',
+          'assets/images/hero.jpg',
+          'assets/images/proj13_1.jpg',
         ],
       ),
       Project(

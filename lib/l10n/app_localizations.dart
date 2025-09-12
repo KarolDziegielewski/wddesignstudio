@@ -362,6 +362,7 @@ Su richiesta della cliente, il progetto prevede una colonna forno e lo spazio pe
       _t('Projekt Balkonu', 'Balcony Design', 'Progetto Balcone');
   String get prj12Title =>
       _t('Łazienka na Poddaszu', 'Attic Bathroom', 'Bagno Mansardato');
+  String get prj13Title => _t('Summer House', 'Summer House', 'Summer House');
   String get showMore => _t('Pokaż więcej', 'Show more', 'Mostra altro');
   String get showLess => _t('Pokaż mniej', 'Show less', 'Mostra meno');
 
