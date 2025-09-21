@@ -1,0 +1,64 @@
+name: WD Design Studio
+
+on:
+  push:
+    branches: [ "main" ]   # zmień, jeśli deploy ma iść z innej gałęzi
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"          # opcjonalnie: flutter-version: "3.24.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # DLA Project Pages ustaw base-href na /nazwa-repo/
+      # Jeśli repo to user/organization pages (np. nazwa.github.io), użyj "/"
+      - name: Build Flutter Web
+        run: |
+          REPO_NAME=$(basename "$GITHUB_REPOSITORY")
+          BASE_href="/$REPO_NAME/"
+          # Jeśli używasz repo typu nazwa.github.io, to:
+          # BASE_href="/"
+          flutter build web --release --base-href "$BASE_href"
+
+      # (Opcjonalnie) SPA fallback: 404.html -> index.html
+      - name: Add SPA fallback for GitHub Pages
+        run: cp build/web/index.html build/web/404.html
+
+      # (Opcjonalnie) Custom domain (podmień na swój)
+      # - name: Add CNAME
+      #   run: echo "twojadomena.pl" > build/web/CNAME
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
