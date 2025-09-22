@@ -111,7 +111,7 @@ class OfferSection extends StatelessWidget {
             );
           },
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 14),
         // Section footer description
         Text(
           t.offerDown,
