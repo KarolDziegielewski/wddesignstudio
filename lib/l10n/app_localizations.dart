@@ -264,7 +264,7 @@ Il mio percorso accademico e professionale mi ha permesso di vedere il design da
   String get faq8q => _t(
         'Czy współpracujesz także z deweloperami i firmami?',
         'Do you work with developers and businesses?',
-        'Lavori anche con sviluppatori immobiliari o aziende?',
+        'Lavori anche con investitori immobiliari o aziende?',
       );
   String get faq8a => _t(
         'Tak. Oprócz projektów prywatnych zajmuję się również aranżacją mieszkań pokazowych, lokali na wynajem oraz wybranych przestrzeni publicznych. Oferuję pełną dokumentację wykonawczą i wizualizacje, które zwiększają atrakcyjność nieruchomości na rynku.',
