@@ -111,11 +111,11 @@ class OfferSection extends StatelessWidget {
             );
           },
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 20),
         // Section footer description
         Text(
           t.offerDown,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontStyle: FontStyle.italic,
                 color: brown,
               ),
