@@ -32,11 +32,11 @@ class OfferSection extends StatelessWidget {
           t.offerHint,
           style: Theme.of(context).textTheme.titleLarge,
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 14),
         // Price badge with gradient background and shimmer effect
         Center(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [
@@ -70,7 +70,7 @@ class OfferSection extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 36,
+                  fontSize: 24,
                   letterSpacing: 1.4,
                   color: const Color.fromARGB(255, 114, 69, 1),
                   shadows: [
