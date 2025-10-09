@@ -503,7 +503,7 @@ class _HeroSection extends StatelessWidget {
           Transform.translate(
             offset: Offset(0, -parallax.toDouble()),
             child: Image.asset(
-              'assets/images/hero.jpg',
+              'assets/images/hero.webp',
               fit: BoxFit.cover,
               alignment: Alignment.center,
               filterQuality: FilterQuality.medium,

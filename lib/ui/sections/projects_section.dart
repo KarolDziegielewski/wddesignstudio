@@ -90,7 +90,7 @@ class ProjectsSection extends StatelessWidget {
         coverImage: 'assets/images/mini_proj13.jpg',
         gallery: const [
           'assets/images/mini_proj13.jpg',
-          'assets/images/hero.jpg',
+          'assets/images/hero.webp',
           'assets/images/proj13_1.jpg',
         ],
       ),
